@@ -1,12 +1,38 @@
-name: Build APK
+name: Build APK and web app
 on:
   push:
     branches: [main]
   workflow_dispatch:
 permissions:
   contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  build:
+  web:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Bundle fonts for offline use
+        run: node scripts/fonts.mjs
+      - name: App icons
+        run: |
+          sudo apt-get update && sudo apt-get install -y librsvg2-bin
+          for n in 180 192 512; do rsvg-convert -w $n -h $n assets/icon.svg -o www/icon-$n.png; done
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: www }
+      - id: deploy
+        uses: actions/deploy-pages@v4
+
+  android:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
