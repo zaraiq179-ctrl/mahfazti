@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script>window.__errs=[];addEventListener("error",function(e){try{__errs.push((e.message||"err")+" @"+String(e.filename||"").split("/").pop()+":"+e.lineno)}catch(_){}});</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -409,7 +410,8 @@ async function scheduleNative(){const ln=LN();if(!ln)return;
     await ln.schedule({notifications:list});nat.pending=list.length;nat.err="";
   }catch(e){nat.err=String(e&&e.message||e).slice(0,160)}
   if(tab==="set")render(false)}
-function natSection(){if(!LN()&&!IS_NATIVE())return "";if(!LN()){const C=window.Capacitor||{};return `<div class="sec"><span>إشعارات الموبايل</span></div><div class="card"><b>نظام الإشعارات ما دا يشتغل</b><div class="foot" style="margin:6px 0 0;direction:ltr;text-align:left">diag: cap=${!!window.Capacitor} plat=${esc(C.getPlatform?C.getPlatform():"?")} plugins=${esc(Object.keys(C.Plugins||{}).join(","))} core=${typeof window.capacitorExports} ln=${typeof window.capacitorLocalNotifications} np=${typeof C.nativePromise} rp=${typeof C.registerPlugin}</div></div>`}const ok=nat.perm==="granted"&&!nat.err;
+const IS_APK=location.hostname==="localhost";
+function natSection(){if(!LN()&&!IS_NATIVE()&&!IS_APK)return "";if(!LN()){const C=window.Capacitor||{};return `<div class="sec"><span>إشعارات الموبايل</span></div><div class="card"><b>نظام الإشعارات ما دا يشتغل</b><div class="foot" style="margin:6px 0 0;direction:ltr;text-align:left">diag: cap=${!!window.Capacitor} plat=${esc(C.getPlatform?C.getPlatform():"?")} plugins=${esc(Object.keys(C.Plugins||{}).join(","))} core=${typeof window.capacitorExports} ln=${typeof window.capacitorLocalNotifications} np=${typeof C.nativePromise} rp=${typeof C.registerPlugin} host=${esc(location.host)} errs=${esc((window.__errs||[]).slice(0,4).join(" | "))}</div></div>`}const ok=nat.perm==="granted"&&!nat.err;
   return `<div class="sec"><span>إشعارات الموبايل</span></div><div class="card grp">
   <div class="sr"><span class="sic" style="--c:${ok?"#34c759":"#ff9500"}">${svg(SI.bell)}</span><span class="sl">${nat.perm==="granted"?"الإشعارات مسموحة":"الإشعارات مو مسموحة"}<small>${nat.err?esc(nat.err):ok?nat.pending+" تذكير مجدول":"اسمح بالإشعارات من إعدادات التطبيق"}</small></span></div>
   ${nat.exact&&nat.exact!=="granted"?`<div class="sr"><span class="sic" style="--c:#ff3b30">${svg(SI.cal)}</span><span class="sl">التنبيهات بالوقت الدقيق مطفية<small>شغّلها حتى توصلك بوقتها</small></span><button class="pill g press" data-act="natExact" style="width:auto;margin:0;padding:0 14px">شغّل</button></div>`:""}
@@ -651,7 +653,8 @@ function setView(){
   <div class="sec"><span>نسب الأسهم</span><span class="num" style="color:${Math.round(sumA)===100?"var(--green)":"var(--red)"}">${Math.round(sumA)}%</span></div>
   <div class="card grp">${s.assets.map((x,i)=>`<label class="sr"><span class="sym sm" style="background:${symCol(x.s,i)}">${esc(x.s?String(x.s).slice(0,4):String(x.n).slice(0,1))}</span><span class="sl">${esc(x.n)}<small class="num">${esc(x.s)}</small></span>${val(`data-asset="${i}"`,+x.p,"%","92px")}<button class="trash press" data-act="assetDel" data-i="${i}" aria-label="حذف">${ic("trash")}</button></label>`).join("")}${s.assets.length?"":`<div class="empty" style="padding:16px">ماكو استثمارات. ضيفها من صفحة الاستثمار.</div>`}</div>
   </details>
-  <div class="foot">التحذيرات تطلع داخل التطبيق من تسجّل مصروف. إشعارات الموبايل والاهتزاز تشتغل بنسخة الأندرويد.</div>`;
+  <div class="foot">التحذيرات تطلع داخل التطبيق من تسجّل مصروف.</div>
+  <div class="foot" style="text-align:center;margin-top:18px">محفظتي · ${IS_APK||IS_NATIVE()?"أندرويد":IS_WEBAPP?"ويب":"Claude"} · نسخة 10</div>`;
 }
 const SI={money:'<rect x="3" y="6" width="18" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.5"/>',rate:'<path d="M7 7.5h11l-3-3M17 16.5H6l3 3"/>',cal:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
  user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',lock:'<rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/>',chart:'<path d="M3.5 17.5 9 12l4 4 7.5-7.5M15 8.5h5.5V14"/>',
