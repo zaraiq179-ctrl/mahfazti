@@ -54,6 +54,13 @@ jobs:
       - name: App icon
         run: sudo apt-get update && sudo apt-get install -y librsvg2-bin && rsvg-convert -w 1024 -h 1024 assets/icon.svg -o assets/icon-only.png
       - run: npx cap add android
+      - name: Notification permissions (exact alarms, boot, post)
+        run: |
+          M=android/app/src/main/AndroidManifest.xml
+          for perm in POST_NOTIFICATIONS SCHEDULE_EXACT_ALARM USE_EXACT_ALARM RECEIVE_BOOT_COMPLETED WAKE_LOCK VIBRATE; do
+            grep -q "android.permission.$perm\"" $M || sed -i "s#</manifest>#    <uses-permission android:name=\"android.permission.$perm\" />\n</manifest>#" $M
+          done
+          cat $M | grep uses-permission
       - run: npx @capacitor/assets generate --android --iconBackgroundColor '#1463FF' --iconBackgroundColorDark '#1463FF'
       - run: npx cap sync android
       - name: Use a fixed signing key so updates install over the old app
