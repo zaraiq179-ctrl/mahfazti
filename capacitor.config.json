@@ -1,0 +1,8 @@
+{
+  "appId": "com.mahfazti.app",
+  "appName": "محفظتي",
+  "webDir": "www",
+  "plugins": {
+    "LocalNotifications": { "iconColor": "#1463FF" }
+  }
+}
