@@ -345,7 +345,7 @@ function spring({from,to,velocity=0,response=.4,damping=1,eps=.01,onUpdate,onDon
 }
 const project=(v,d=.998)=>(v/1000)*d/(1-d);
 function hap(kind){
-  const H=(window.capacitorHaptics&&window.capacitorHaptics.Haptics)||(window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.Haptics);
+  const H=_hp||(_hp=plug("Haptics","capacitorHaptics"));
   try{if(H){kind==="ok"?H.notification({type:"SUCCESS"}):kind==="warn"?H.notification({type:"WARNING"}):H.impact({style:kind==="mid"?"MEDIUM":"LIGHT"});return}
     if(navigator.vibrate)navigator.vibrate(kind==="warn"?[18,50,18]:kind==="ok"?[10,30,14]:6)}catch(e){}
 }
@@ -385,7 +385,15 @@ async function initDb(){
 }
 
 /* ---------- native notifications (Android build) ---------- */
-const LN=()=>(window.capacitorLocalNotifications&&window.capacitorLocalNotifications.LocalNotifications)||(window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.LocalNotifications);
+const IS_NATIVE=()=>{const C=window.Capacitor;try{return !!(C&&(C.isNativePlatform?C.isNativePlatform():(C.getPlatform&&C.getPlatform()!=="web")))}catch(e){return false}};
+const plug=(name,glob)=>{const C=window.Capacitor;
+  if(window[glob]&&window[glob][name])return window[glob][name];
+  if(C&&C.Plugins&&C.Plugins[name])return C.Plugins[name];
+  if(!IS_NATIVE())return null;
+  if(C.registerPlugin){try{return C.registerPlugin(name)}catch(e){}}
+  if(C.nativePromise)return new Proxy({},{get:(_,m)=>m==="then"?undefined:(o)=>C.nativePromise(name,m,o||{})});
+  return null};
+let _ln,_hp;const LN=()=>_ln||(_ln=plug("LocalNotifications","capacitorLocalNotifications"));
 function notify(title,body){const ln=LN();if(ln)ln.schedule({notifications:[{id:1000+Math.floor(Math.random()*90000),title,body,channelId:"mahfazti",schedule:{at:new Date(Date.now()+800)}}]}).catch(()=>{});
   if(DK&&inApp&&DK.notification)DK.notification.show({body:title+": "+body}).catch(()=>{})}
 function nextPay(){const p=Math.min(28,Math.max(1,+S.set.payday||1)),d=new Date();d.setHours(0,0,0,0);let n=new Date(d.getFullYear(),d.getMonth(),p);if(n<d)n=new Date(d.getFullYear(),d.getMonth()+1,p);return{date:n,days:Math.round((n-d)/864e5)}}
@@ -401,7 +409,7 @@ async function scheduleNative(){const ln=LN();if(!ln)return;
     await ln.schedule({notifications:list});nat.pending=list.length;nat.err="";
   }catch(e){nat.err=String(e&&e.message||e).slice(0,160)}
   if(tab==="set")render(false)}
-function natSection(){if(!LN())return "";const ok=nat.perm==="granted"&&!nat.err;
+function natSection(){if(!LN()&&!IS_NATIVE())return "";if(!LN()){const C=window.Capacitor||{};return `<div class="sec"><span>إشعارات الموبايل</span></div><div class="card"><b>نظام الإشعارات ما دا يشتغل</b><div class="foot" style="margin:6px 0 0;direction:ltr;text-align:left">diag: cap=${!!window.Capacitor} plat=${esc(C.getPlatform?C.getPlatform():"?")} plugins=${esc(Object.keys(C.Plugins||{}).join(","))} core=${typeof window.capacitorExports} ln=${typeof window.capacitorLocalNotifications} np=${typeof C.nativePromise} rp=${typeof C.registerPlugin}</div></div>`}const ok=nat.perm==="granted"&&!nat.err;
   return `<div class="sec"><span>إشعارات الموبايل</span></div><div class="card grp">
   <div class="sr"><span class="sic" style="--c:${ok?"#34c759":"#ff9500"}">${svg(SI.bell)}</span><span class="sl">${nat.perm==="granted"?"الإشعارات مسموحة":"الإشعارات مو مسموحة"}<small>${nat.err?esc(nat.err):ok?nat.pending+" تذكير مجدول":"اسمح بالإشعارات من إعدادات التطبيق"}</small></span></div>
   ${nat.exact&&nat.exact!=="granted"?`<div class="sr"><span class="sic" style="--c:#ff3b30">${svg(SI.cal)}</span><span class="sl">التنبيهات بالوقت الدقيق مطفية<small>شغّلها حتى توصلك بوقتها</small></span><button class="pill g press" data-act="natExact" style="width:auto;margin:0;padding:0 14px">شغّل</button></div>`:""}
