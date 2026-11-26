@@ -312,7 +312,7 @@ const DEF={salary:1000000,rate:1500,split:{p:T3,o:T3,i:T3},payday:1,remind:"21:0
   sav:{monthly:0,goal:0,name:"صندوق الطوارئ"},
   loan:{n:"القسط",a:0,start:"",end:"",payout:0,emerg:0,travel:0,spread:4},
   obl:[{id:"car",n:"السيارة",a:0},{id:"home",n:"البيت",a:0}],
-  assets:[{s:"SPUS",n:"S&P 500 الشرعي",p:70,w:"قسم الأسهم"},{s:"PAXG",n:"ذهب",p:20,w:"Spot"},{s:"TSM",n:"TSMC",p:10,w:"قسم الأسهم"}]};
+  assets:[]};
 const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const clone=o=>JSON.parse(JSON.stringify(o));
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -522,8 +522,17 @@ function loanCard(c){const li=c.li;if(!li)return "";const L=li.L,em=MONTHS[+L.en
     </div>`;
   if(li.isPay&&!c.m.payout){const inv=Math.max(0,L.payout-L.emerg-(+L.travel||0)),sp=+L.spread||4;return `<div class="card loanc"><div class="lh"><span class="sic" style="--c:#34c759">${svg(SI.money)}</span><div class="grow"><b>شهر استلام ${esc(L.n)}: ${f(L.payout)}</b><div class="s">طوارئ ${f(L.emerg)} · سفر ${f(L.travel||0)}${inv?` · استثمار ${f(inv)} (${f(inv/sp)} إضافي لمدة ${sp} أشهر)`:""}</div></div></div><button class="pill g press" data-act="payout">${svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>')}<span>استلمتها ووزعتها</span></button></div>`}
   return ""}
+let addInv=false,newInv={n:"",s:"",p:""};
+const INVSUG=[{n:"S&P 500 الشرعي",s:"SPUS",w:"قسم الأسهم"},{n:"ذهب",s:"PAXG",w:"Spot"},{n:"TSMC",s:"TSM",w:"قسم الأسهم"},{n:"S&P 500",s:"VOO",w:"قسم الأسهم"},{n:"ناسداك 100",s:"QQQ",w:"قسم الأسهم"},{n:"فضة",s:"SLV",w:"قسم الأسهم"}];
+function addInvForm(c){if(!addInv)return "";const left=Math.max(0,100-c.s.assets.reduce((a,x)=>a+(+x.p||0),0));
+  return `<div class="card"><b style="font-size:17px">استثمار جديد</b>
+    <div class="chips2" style="justify-content:flex-start;margin:12px 0 10px">${INVSUG.filter(g=>!c.s.assets.some(x=>x.s===g.s)).map((g,i)=>`<button class="press${newInv.s===g.s?" on":""}" data-act="invSug" data-i="${INVSUG.indexOf(g)}">${esc(g.n)}</button>`).join("")}</div>
+    <div class="ofield" style="background:var(--card2)"><span>الاسم</span><input class="nm" id="niN" value="${esc(newInv.n)}" placeholder="مثلاً: ذهب" maxlength="30" style="text-align:left"></div>
+    <div class="ofield" style="background:var(--card2)"><span>الرمز (اختياري)</span><input id="niS" value="${esc(newInv.s)}" placeholder="مثلاً: PAXG" maxlength="10" style="background:var(--card)"></div>
+    <div class="ofield" style="background:var(--card2)"><span>النسبة من مبلغ الاستثمار</span><input id="niP" inputmode="decimal" value="${esc(newInv.p||left||"")}" style="background:var(--card);width:30%"><em style="font-style:normal;color:var(--ink2)">%</em></div>
+    <div style="display:flex;gap:10px;margin-top:6px"><button class="cta press" data-act="invSave" style="flex:1">ضيف</button><button class="cta press" data-act="invCancel" style="flex:none;width:96px;background:var(--card2);color:var(--ink)">إلغاء</button></div></div>`}
 function invView(){
-  const c=calc(),u=c.I/c.s.rate,sum=c.s.assets.reduce((a,x)=>a+(+x.p||0),0),bought=c.s.assets.filter(x=>c.m.bought[x.s]).length;
+  const c=calc(),u=c.I/c.s.rate,sum=c.s.assets.reduce((a,x)=>a+(+x.p||0),0),bought=c.s.assets.filter(x=>c.m.bought[x.s||x.n]).length;
   const hist=Object.keys(S.months).filter(k=>S.months[k]&&S.months[k].inv).sort().reverse();
   const totI=hist.reduce((a,k)=>a+S.months[k].inv.iqd,0),totU=hist.reduce((a,k)=>a+S.months[k].inv.iqd/S.months[k].inv.rate,0);
   if(!c.I){const li=c.li;return `<div class="lt"><h1>الاستثمار</h1><p>${mlabel(c.k)}</p></div>
@@ -533,10 +542,11 @@ function invView(){
   ${hist.map(k=>`<div class="kv" style="border-top:.5px solid var(--sep);padding:10px 0;margin-top:6px"><span style="color:var(--ink)">${mlabel(k)}</span><span class="num">${usd(S.months[k].inv.iqd/S.months[k].inv.rate)}</span></div>`).join("")}</div>`}
   return `<div class="lt"><h1>الاستثمار</h1><p>${mlabel(c.k)}</p></div>
   <div class="card ih"><small>مبلغ هالشهر</small><div class="big" style="font-size:42px">${N("iu",u,"u")}</div><span class="num" style="font-size:15px">${f(c.I)} د.ع · على ${f(c.s.rate)}</span>
-    <div class="bar"><i data-w="${bought/c.s.assets.length*100}" id="buyBar"></i></div><small id="buyTxt">اشتريت ${bought} من ${c.s.assets.length}</small></div>
-  ${Math.round(sum)!==100?`<div class="card al or"><span class="ic">!</span><p>مجموع نسب الأسهم ${Math.round(sum)}%، لازم يكون 100%</p></div>`:""}
-  <div class="sec"><span>شنو تشتري</span><span>علّم اللي اشتريته</span></div>
-  <div class="card list" style="padding:4px 0">${c.s.assets.map((x,i)=>`<div class="row"><span class="sym" style="background:${symCol(x.s,i)}">${esc(String(x.s).slice(0,4))}</span><div class="grow"><div>${esc(x.n)}</div><div class="s"><span class="num">${esc(x.s)}</span> · ${+x.p}%${x.w?" · "+esc(x.w):""}</div></div><div style="text-align:left"><b class="num amtR">${usd(u*x.p/100)}</b><div class="s num">${f(c.I*x.p/100)}</div></div>${ck(c.m.bought[x.s],"buy",x.s)}</div>`).join("")}</div>
+    ${c.s.assets.length?`<div class="bar"><i data-w="${bought/c.s.assets.length*100}" id="buyBar"></i></div><small id="buyTxt">اشتريت ${bought} من ${c.s.assets.length}</small>`:""}</div>
+  ${c.s.assets.length&&Math.round(sum)!==100?`<div class="card al or"><span class="ic">!</span><p>مجموع نسب الأسهم ${Math.round(sum)}%، لازم يكون 100%</p></div>`:""}
+  <div class="sec"><span>شنو تشتري</span><span>${c.s.assets.length?"علّم اللي اشتريته":""}</span></div>
+  ${addInvForm(c)}
+  <div class="card list" style="padding:${c.s.assets.length?"4px 0":"0"}">${c.s.assets.length?"":`<div class="empty">ما ضفت استثمارات بعد.<br>ضيف اللي تريد تستثمر بيه، وحدد نسبة كل واحد.</div>`}${c.s.assets.map((x,i)=>`<div class="row"><span class="sym" style="background:${symCol(x.s,i)}">${esc(x.s?String(x.s).slice(0,4):String(x.n).slice(0,1))}</span><div class="grow"><div>${esc(x.n)}</div><div class="s">${x.s?`<span class="num">${esc(x.s)}</span> · `:""}${+x.p}%${x.w?" · "+esc(x.w):""}</div></div><div style="text-align:left"><b class="num amtR">${usd(u*x.p/100)}</b><div class="s num">${f(c.I*x.p/100)}</div></div>${ck(c.m.bought[x.s||x.n],"buy",x.s||x.n)}</div>`).join("")}${addInv?"":`<button class="link press soft" data-act="invAdd" style="text-align:center">+ أضف استثمار</button>`}</div>
   <div class="sec"><span>سجّل استثمارك</span></div>
   <div class="card">
     ${c.m.inv?`<div class="kv"><span>استثمرت هالشهر</span><b class="num" style="color:var(--green)">${f(c.m.inv.iqd)} د.ع</b></div><div class="kv" style="margin-bottom:8px"><span>على سعر ${f(c.m.inv.rate)}</span><b class="num">${usd(c.m.inv.iqd/c.m.inv.rate)}</b></div>`:""}
@@ -598,7 +608,7 @@ function setView(){
     <button class="sr addr press soft" data-act="oblAdd"><span class="sic" style="--c:#0a84ff">${ic("plus")}</span><span class="sl" style="color:var(--blue)">أضف التزام</span></button>
   </div>
   <div class="sec"><span>نسب الأسهم</span><span class="num" style="color:${Math.round(sumA)===100?"var(--green)":"var(--red)"}">${Math.round(sumA)}%</span></div>
-  <div class="card grp">${s.assets.map((x,i)=>`<label class="sr"><span class="sym sm" style="background:${symCol(x.s,i)}">${esc(String(x.s).slice(0,4))}</span><span class="sl">${esc(x.n)}<small class="num">${esc(x.s)}</small></span>${val(`data-asset="${i}"`,+x.p,"%","92px")}</label>`).join("")}</div>
+  <div class="card grp">${s.assets.map((x,i)=>`<label class="sr"><span class="sym sm" style="background:${symCol(x.s,i)}">${esc(x.s?String(x.s).slice(0,4):String(x.n).slice(0,1))}</span><span class="sl">${esc(x.n)}<small class="num">${esc(x.s)}</small></span>${val(`data-asset="${i}"`,+x.p,"%","92px")}<button class="trash press" data-act="assetDel" data-i="${i}" aria-label="حذف">${ic("trash")}</button></label>`).join("")}${s.assets.length?"":`<div class="empty" style="padding:16px">ماكو استثمارات. ضيفها من صفحة الاستثمار.</div>`}</div>
   </details>
   <div class="foot">التحذيرات تطلع داخل التطبيق من تسجّل مصروف. إشعارات الموبايل والاهتزاز تشتغل بنسخة الأندرويد.</div>`;
 }
@@ -782,6 +792,13 @@ document.addEventListener("click",e=>{
   if(t.dataset.tab){go(t.dataset.tab);return}
   const a=t.dataset.act,c=calc();
   if(a==="close")closeSheet();
+  else if(a==="invAdd"){addInv=true;newInv={n:"",s:"",p:""};hap();render(false)}
+  else if(a==="invCancel"){addInv=false;hap();render(false)}
+  else if(a==="invSug"){const g=INVSUG[+t.dataset.i];newInv.n=g.n;newInv.s=g.s;newInv.w=g.w;newInv.p=$("#niP").value;hap();render(false)}
+  else if(a==="invSave"){const n=$("#niN").value.trim(),sy=$("#niS").value.trim().toUpperCase().slice(0,10),pp=num($("#niP").value);
+    if(!n){const el=$("#niN");el.closest(".ofield").classList.remove("shake");void el.offsetWidth;el.closest(".ofield").classList.add("shake");hap("warn");return}
+    S.set.assets.push({s:sy,n,p:pp,w:newInv.s===sy?(newInv.w||""):""});addInv=false;save("settings");render(false);hap("ok");toast("انضاف "+n)}
+  else if(a==="assetDel"){e.preventDefault();const i=+t.dataset.i,[x]=S.set.assets.splice(i,1);save("settings");render(false);hap("warn");toast("انحذف "+x.n,"r",()=>{S.set.assets.splice(i,0,x);save("settings");render(false)})}
   else if(a==="obNext"){obCollect();if(ob.step===1&&!num(ob.salary)){const el=$("#obSal");el.classList.remove("shake");void el.offsetWidth;el.classList.add("shake");hap("warn");return}
     hap();if(ob.step<OBSTEPS-1){ob.step++;drawOnb(-1)}else obFinish()}
   else if(a==="obBack"){obCollect();hap();ob.step=Math.max(0,ob.step-1);drawOnb(1)}
@@ -797,7 +814,7 @@ document.addEventListener("click",e=>{
   else if(a==="saveExp")saveExp();
   else if(a==="paid"||a==="buy"){const on=!t.classList.contains("on");t.classList.toggle("on",on);t.setAttribute("aria-pressed",on);hap(on?"ok":undefined);
     (a==="paid"?c.m.paid:c.m.bought)[t.dataset.id]=on;save(c.k);
-    if(a==="buy"){const n=c.s.assets.filter(x=>c.m.bought[x.s]).length;$("#buyTxt").textContent="اشتريت "+n+" من "+c.s.assets.length;$("#buyBar").style.width=n/c.s.assets.length*100+"%";if(n===c.s.assets.length)toast("خلصت استثمار هالشهر")}}
+    if(a==="buy"){const n=c.s.assets.filter(x=>c.m.bought[x.s||x.n]).length;$("#buyTxt").textContent="اشتريت "+n+" من "+c.s.assets.length;$("#buyBar").style.width=n/c.s.assets.length*100+"%";if(n===c.s.assets.length)toast("خلصت استثمار هالشهر")}}
   else if(a==="saved"){c.m.saved=c.SV;save(c.k);render(false);hap("ok");toast("انضافت "+f(c.SV)+" للادخار")}
   else if(a==="payout"){const L=S.set.loan;c.m.payout=true;c.m.saved=(+c.m.saved||0)+(+L.emerg||0);c.m.travelIn=(+c.m.travelIn||0)+(+L.travel||0);save(c.k);render(false);hap("ok");toast("انوزعت: طوارئ وسفر واستثمار")}
   else if(a==="unsave"){c.m.saved=0;save(c.k);render(false);hap()}
@@ -809,6 +826,7 @@ document.addEventListener("click",e=>{
 document.addEventListener("keydown",e=>{if(!open)return;if(e.target.id==="aNote"){if(e.key==="Enter")saveExp();return}
   if(/^[0-9]$/.test(e.key))key(e.key);else if(e.key==="Backspace")key("⌫");else if(e.key==="Enter")saveExp();else if(e.key==="Escape")closeSheet()});
 document.addEventListener("input",e=>{const t=e.target,s=S.set;
+  if(t.id==="niN")newInv.n=t.value;else if(t.id==="niS")newInv.s=t.value;else if(t.id==="niP")newInv.p=t.value;
   if(t.closest&&t.closest("#onb")){if(t.dataset.ob){const o=ob.obl[+t.dataset.i];if(o){if(t.dataset.ob==="n")o.n=t.value;else o.a=num(t.value)}}
     if(t.id==="obSav"){ob.sav=num(t.value);const c=previewSplit(),p=$("#obPrev"),dd=$("#obDay");if(p)p.textContent=f(c.P-ob.sav);if(dd)dd.textContent=f((c.P-ob.sav)/30)}
     if(t.inputMode==="numeric"&&t.id!=="obLN"){const pos=t.value.length;const v=num(t.value);t.value=v?f(v):"";}
