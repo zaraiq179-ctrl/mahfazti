@@ -139,6 +139,33 @@ input{font:inherit;color:inherit}
 .cta.g{background:var(--green)}
 input.box{width:100%;min-height:48px;border-radius:12px;border:0;background:var(--card2);padding:0 14px;font-size:17px;direction:ltr;text-align:left;outline:none}
 input.box:focus{box-shadow:0 0 0 2px var(--blue)}
+/* onboarding */
+.onb{position:fixed;inset:0;z-index:70;background:var(--bg);overflow-y:auto}
+.onb[hidden]{display:none}
+.onbin{max-width:460px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top) + 28px) 22px calc(env(safe-area-inset-bottom) + 22px)}
+.dots{display:flex;gap:6px;justify-content:center;margin-bottom:26px}
+.dots i{width:7px;height:7px;border-radius:4px;background:var(--ink3);transition:width .4s var(--spring),background .3s}
+.dots i.on{width:22px;background:var(--blue)}
+.ostep{flex:1;display:flex;flex-direction:column}
+.ostep h2{font-size:30px;line-height:1.15;margin:0 0 8px;font-weight:700;letter-spacing:-.01em}
+.ostep p.lead{color:var(--ink2);margin:0 0 26px;font-size:16px}
+.bigin{width:100%;border:0;background:var(--card);border-radius:20px;height:76px;text-align:center;font:700 36px "Readex Pro",system-ui,sans-serif;direction:ltr;outline:none;color:var(--ink)}
+.bigin:focus{box-shadow:0 0 0 2px var(--blue)}
+.ounit{text-align:center;color:var(--ink2);font-size:14px;margin:8px 0 18px}
+.ofield{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border-radius:16px;padding:10px 14px;margin-bottom:10px;min-height:58px}
+.ofield span{font-size:16px}
+.ofield input,.ofield select{border:0;background:var(--card2);border-radius:11px;height:40px;padding:0 12px;font:500 16px "Readex Pro",system-ui,sans-serif;color:var(--ink);text-align:left;direction:ltr;width:46%;outline:none}
+.ofield input.nm{direction:rtl;text-align:right;background:none;padding:0;width:auto;flex:1;font-family:inherit}
+.chips2{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:4px 0 16px}
+.chips2 button{border-radius:999px;background:var(--card);padding:0 16px;height:40px;font-size:15px;font-weight:500}
+.chips2 button.on{background:var(--blue);color:#fff}
+.tog{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.tog button{height:56px;border-radius:16px;background:var(--card);font-size:17px;font-weight:600}
+.tog button.on{background:var(--blue);color:#fff}
+.onav{display:flex;gap:10px;margin-top:22px}
+.onav .cta{flex:1}
+.onav .back{flex:none;width:56px;min-height:54px;border-radius:16px;background:var(--card);font-size:22px;color:var(--ink2)}
+.hero-ic{width:96px;height:96px;border-radius:24px;margin:30px auto 26px;display:block;box-shadow:0 16px 40px rgba(20,99,255,.35)}
 /* loan */
 .loanc .lh{display:flex;gap:12px;align-items:flex-start}
 .loanc .lh b{font-size:16px}
@@ -259,6 +286,7 @@ input.box:focus{box-shadow:0 0 0 2px var(--blue)}
   <div class="hintc">اكتب المبلغ، وبعدين اضغط على شنو صرفته</div>
   <div class="cats" id="cats"></div>
 </section>
+<div class="onb" id="onb" hidden><div class="onbin" id="onbin"></div></div>
 <div class="island" id="island"><i class="dot"></i><span id="imsg"></span><button id="iundo" hidden>تراجع</button></div>
 
 <script>
@@ -279,9 +307,9 @@ const SYMC=["#f5b300","#00a4ef","#34a853","#ff9900","#e60012","#0668e1","#cc0000
 const SCOL={SPUS:"#0a7f5a",PAXG:"#d4a017",TSM:"#e60012",TSMC:"#e60012",MSFTB:"#00a4ef",GOOGLB:"#34a853",AMZNB:"#ff9900",METAB:"#0668e1",TSLAB:"#cc0000"};
 const symCol=(sym,i)=>SCOL[sym]||SYMC[i%SYMC.length];
 const T3=100/3;
-const DEF={salary:1300000,rate:1730,split:{p:T3,o:T3,i:T3},payday:1,remind:"21:00",
-  sav:{monthly:100000,goal:0,name:"صندوق الطوارئ"},
-  loan:{n:"السلفة",a:900000,start:"2026-12",end:"2027-03",payout:5000000,emerg:1500000,travel:2500000,spread:4},
+const DEF={salary:1000000,rate:1500,split:{p:T3,o:T3,i:T3},payday:1,remind:"21:00",
+  sav:{monthly:0,goal:0,name:"صندوق الطوارئ"},
+  loan:{n:"القسط",a:0,start:"",end:"",payout:0,emerg:0,travel:0,spread:4},
   obl:[{id:"car",n:"السيارة",a:0},{id:"home",n:"البيت",a:0}],
   assets:[{s:"SPUS",n:"S&P 500 الشرعي",p:70,w:"قسم الأسهم"},{s:"PAXG",n:"ذهب",p:20,w:"Spot"},{s:"TSM",n:"TSMC",p:10,w:"قسم الأسهم"}]};
 const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -317,10 +345,10 @@ function hap(kind){
 
 /* ---------- state + storage ---------- */
 let S={set:clone(DEF),months:{}};
-try{const l=JSON.parse(localStorage.getItem("mz1"));if(l&&l.set){S={set:{...clone(DEF),...l.set},months:l.months||{}}}}catch(e){}
+let hadLocal=false;try{const l=JSON.parse(localStorage.getItem("mz1"));if(l&&l.set){hadLocal=true;S={set:{...clone(DEF),...l.set},months:l.months||{}};if(S.set.onboarded===undefined)S.set.onboarded=true}}catch(e){}
 function migrate(){let ch=false;if(S.set.assetsV!==2){S.set.assets=clone(DEF.assets);S.set.assetsV=2;ch=true}
-  if(!S.set.loanV){S.set.loan=S.set.loan||clone(DEF.loan);S.set.obl.forEach(o=>{if(o.id==="car"){if(o.n==="السيارة")o.n="السيارة (بنزين)";if(!+o.a)o.a=150000}if(o.id==="home"&&!+o.a)o.a=100000});S.set.loanV=1;ch=true}
-  if(S.set.loanV===1&&S.set.loan){if(S.set.loan.travel===undefined)S.set.loan.travel=2500000;S.set.loanV=2;ch=true}
+  if(!S.set.loanV){S.set.loan=S.set.loan||clone(DEF.loan);S.set.loanV=2;ch=true}
+  if(S.set.loanV===1&&S.set.loan){if(S.set.loan.travel===undefined)S.set.loan.travel=0;S.set.loanV=2;ch=true}
   return ch}
 if(migrate()){try{localStorage.setItem("mz1",JSON.stringify(S))}catch(e){}}
 function M(k){const m=S.months[k]||(S.months[k]={});m.exp=m.exp||[];m.paid=m.paid||{};m.bought=m.bought||{};if(m.inv===undefined)m.inv=null;return m}
@@ -342,7 +370,7 @@ async function initDb(){
     const snap=await db.collection(base).get();store={mode:"db",db,base};
     if(snap.empty){dirty.add("settings");Object.keys(S.months).forEach(k=>dirty.add(k));flush();return}
     snap.docs.forEach(d=>{const b=d.data();if(!b)return;
-      if(d.id==="settings"&&b.set)S.set={...clone(DEF),...clone(b.set)};else if(d.id.startsWith("m-"))S.months[d.id.slice(2)]=clone(b)});
+      if(d.id==="settings"&&b.set){S.set={...clone(DEF),...clone(b.set)};if(S.set.onboarded===undefined)S.set.onboarded=true;closeOnb()}else if(d.id.startsWith("m-"))S.months[d.id.slice(2)]=clone(b)});
     if(migrate())save("settings");
     try{localStorage.setItem("mz1",JSON.stringify(S))}catch(e){}
     render(false);scheduleNative();
@@ -695,6 +723,53 @@ function saveExp(cat){if(cat)newCat=cat;const a=+amt||0;if(!a){const el=$("#amtv
   else if(c.tod>c.allow&&before.tod<=before.allow){toast("تجاوزت حدّك اليوم","o");hap("warn");notify("محفظتي","تجاوزت حد صرفك اليوم")}
   else{toast("انسجل "+f(a)+" دينار");hap("ok")}}
 
+/* ---------- onboarding ---------- */
+let ob={step:0,salary:"",payday:1,rate:"",obl:[{id:"home",n:"البيت أو الإيجار",a:""},{id:"car",n:"السيارة أو البنزين",a:""}],hasLoan:false,loanA:"",loanN:"",payout:"",sav:""};
+const OBSTEPS=4;
+function closeOnb(){const o=$("#onb");if(o&&!o.hidden){o.hidden=true;document.body.classList.remove("lock")}}
+function openOnb(){const o=$("#onb");o.hidden=false;document.body.classList.add("lock");ob.rate=String(S.set.rate||"");drawOnb(0)}
+function fmtIn(el){const v=num(el.value);el.value=v?f(v):""}
+function drawOnb(dir){
+  const st=ob.step,box=$("#onbin");let h="";
+  const dots=`<div class="dots">${Array.from({length:OBSTEPS},(_,i)=>`<i class="${i===st?"on":""}"></i>`).join("")}</div>`;
+  if(st===0)h=`<div class="ostep"><img class="hero-ic" src="${APPICON}" alt=""><h2 style="text-align:center">أهلاً بيك بمحفظتي</h2><p class="lead" style="text-align:center">نرتب راتبك بثلاث أسئلة سريعة، وبعدها يكلك التطبيق كل يوم شكد تكدر تصرف.</p><div style="flex:1"></div></div>`;
+  if(st===1)h=`<div class="ostep"><h2>شكد راتبك الشهري؟</h2><p class="lead">بالدينار العراقي.</p>
+    <input class="bigin" id="obSal" inputmode="numeric" placeholder="0" value="${ob.salary?f(ob.salary):""}"><div class="ounit">دينار</div>
+    <label class="ofield"><span>يوم نزول الراتب</span><select id="obPay">${Array.from({length:28},(_,i)=>`<option value="${i+1}"${ob.payday===i+1?" selected":""}>${i+1}</option>`).join("")}</select></label>
+    <label class="ofield"><span>سعر الدولار</span><input id="obRate" inputmode="numeric" value="${ob.rate?f(ob.rate):""}" placeholder="1500"></label>
+    <p class="foot" style="margin:6px 4px 0">الراتب ينقسم ثلاث أقسام: مصروفك، والتزاماتك، والاستثمار. تكدر تغيّر النسب بعدين.</p></div>`;
+  if(st===2)h=`<div class="ostep"><h2>عندك التزامات شهرية؟</h2><p class="lead">مصاريف ثابتة تدفعها كل شهر. اتركها فارغة إذا ماكو.</p>
+    ${ob.obl.map((o,i)=>`<div class="ofield"><input class="nm" data-ob="n" data-i="${i}" value="${esc(o.n)}" maxlength="30"><input data-ob="a" data-i="${i}" inputmode="numeric" placeholder="0" value="${o.a?f(o.a):""}"></div>`).join("")}
+    <button class="link press soft" data-act="obAdd" style="text-align:center">+ أضف التزام</button>
+    <h2 style="font-size:22px;margin-top:18px">عندك قسط أو سلفة أو جمعية؟</h2>
+    <div class="tog"><button class="press${ob.hasLoan?"":" on"}" data-act="obLoan" data-v="0">لا</button><button class="press${ob.hasLoan?" on":""}" data-act="obLoan" data-v="1">اي</button></div>
+    ${ob.hasLoan?`<label class="ofield"><span>القسط الشهري</span><input id="obLA" inputmode="numeric" placeholder="0" value="${ob.loanA?f(ob.loanA):""}"></label>
+    <label class="ofield"><span>كم قسط باقي؟</span><input id="obLN" inputmode="numeric" placeholder="0" value="${esc(ob.loanN)}"></label>
+    <label class="ofield"><span>تستلم مبلغ بالأخير؟</span><input id="obLP" inputmode="numeric" placeholder="اختياري" value="${ob.payout?f(ob.payout):""}"></label>`:""}</div>`;
+  if(st===3){const c=previewSplit();h=`<div class="ostep"><h2>تريد تدخر كل شهر؟</h2><p class="lead">ينخصم من مصروفك الشخصي، ويتجمع بصندوق الطوارئ.${ob.hasLoan&&num(ob.loanA)?" ويبدي بعد ما تخلص الأقساط.":""}</p>
+    <input class="bigin" id="obSav" inputmode="numeric" placeholder="0" value="${ob.sav?f(ob.sav):""}"><div class="ounit">دينار بالشهر</div>
+    <div class="chips2">${[0,.1,.2].map(x=>{const v=Math.round(c.P*x/1000)*1000;return `<button class="press${num(ob.sav)===v?" on":""}" data-act="obSavQ" data-v="${v}">${x?f(v):"بدون"}</button>`}).join("")}</div>
+    <div class="card" style="margin-top:6px"><div class="kv"><span>مصروفك بالشهر</span><b class="num" id="obPrev">${f(c.P-num(ob.sav))}</b></div><div class="kv"><span>تقريباً باليوم</span><b class="num" id="obDay">${f((c.P-num(ob.sav))/30)}</b></div></div></div>`}
+  box.innerHTML=dots+h+`<div class="onav">${st?`<button class="back press" data-act="obBack" aria-label="رجوع">›</button>`:""}<button class="cta press" data-act="obNext">${st===0?"يلا نبدي":st===OBSTEPS-1?"خلصنا":"التالي"}</button></div>`;
+  const step=box.querySelector(".ostep");
+  if(dir&&step)spring({from:0,to:1,response:.42,damping:.86,eps:.001,onUpdate:p=>{step.style.transform=`translateX(${dir*40*(1-p)}px)`;step.style.opacity=Math.min(1,.2+p)}});
+  const fi=box.querySelector("#obSal,#obSav");if(fi&&!("ontouchstart" in window))setTimeout(()=>fi.focus(),150);
+}
+function previewSplit(){const sal=num(ob.salary)||0,obl=ob.obl.reduce((a,o)=>a+num(o.a),0),la=ob.hasLoan?num(ob.loanA):0;
+  return la?{P:Math.max(0,sal-obl-la)}:{P:sal*S.set.split.p/100}}
+function obCollect(){const g=id=>$(id);
+  if(ob.step===1){ob.salary=num(g("#obSal").value);ob.payday=+g("#obPay").value;ob.rate=num(g("#obRate").value)}
+  if(ob.step===2&&ob.hasLoan){ob.loanA=num(g("#obLA").value);ob.loanN=num(g("#obLN").value);ob.payout=num(g("#obLP").value)}
+  if(ob.step===3){ob.sav=num(g("#obSav").value)}}
+function obFinish(){const s=S.set,d=new Date();
+  s.salary=num(ob.salary)||s.salary;s.payday=ob.payday||1;if(num(ob.rate))s.rate=num(ob.rate);
+  s.obl=ob.obl.filter(o=>o.n.trim()).map((o,i)=>({id:o.id||("o"+i),n:o.n.trim(),a:num(o.a)}));
+  if(ob.hasLoan&&num(ob.loanA)&&num(ob.loanN)){const startK=d.getDate()<s.payday?mk(d):addM(mk(d),1),pay=num(ob.payout);
+    s.loan={n:"القسط",a:num(ob.loanA),start:startK,end:addM(startK,num(ob.loanN)-1),payout:pay,emerg:Math.round(pay*.3/1000)*1000,travel:0,spread:4}}
+  else s.loan=clone(DEF.loan);
+  s.sav=Object.assign(clone(DEF.sav),s.sav||{},{monthly:num(ob.sav)});
+  s.onboarded=true;save("settings");closeOnb();tab="home";prevFrac=null;render(true);scheduleNative();reSchedule();hap("ok");toast("كلشي جاهز، أهلاً بيك")}
+
 /* ---------- events ---------- */
 $("#fab").addEventListener("click",openSheet);
 document.addEventListener("click",e=>{
@@ -706,6 +781,12 @@ document.addEventListener("click",e=>{
   if(t.dataset.tab){go(t.dataset.tab);return}
   const a=t.dataset.act,c=calc();
   if(a==="close")closeSheet();
+  else if(a==="obNext"){obCollect();if(ob.step===1&&!num(ob.salary)){const el=$("#obSal");el.classList.remove("shake");void el.offsetWidth;el.classList.add("shake");hap("warn");return}
+    hap();if(ob.step<OBSTEPS-1){ob.step++;drawOnb(-1)}else obFinish()}
+  else if(a==="obBack"){obCollect();hap();ob.step=Math.max(0,ob.step-1);drawOnb(1)}
+  else if(a==="obAdd"){ob.obl.push({id:"o"+Date.now().toString(36),n:"التزام جديد",a:""});hap();drawOnb(0)}
+  else if(a==="obLoan"){ob.hasLoan=t.dataset.v==="1";hap();drawOnb(0)}
+  else if(a==="obSavQ"){ob.sav=+t.dataset.v;hap();drawOnb(0)}
   else if(a==="install"){DK.install.request().catch(()=>{})}
   else if(a==="enableNotif"){t.disabled=true;DK.permissions.request(["notifications","full-access","menu-bar"]).then(async st=>{
       if(st["full-access"]==="granted"){await setupScheduler().catch(e=>{deskNote="صار خطأ: "+String(e.message||e).slice(0,120)})}else deskNote="الإشعارات تحتاج إذن الوصول الكامل حتى تشتغل والتطبيق مسدود.";
@@ -727,6 +808,10 @@ document.addEventListener("click",e=>{
 document.addEventListener("keydown",e=>{if(!open)return;if(e.target.id==="aNote"){if(e.key==="Enter")saveExp();return}
   if(/^[0-9]$/.test(e.key))key(e.key);else if(e.key==="Backspace")key("⌫");else if(e.key==="Enter")saveExp();else if(e.key==="Escape")closeSheet()});
 document.addEventListener("input",e=>{const t=e.target,s=S.set;
+  if(t.closest&&t.closest("#onb")){if(t.dataset.ob){const o=ob.obl[+t.dataset.i];if(o){if(t.dataset.ob==="n")o.n=t.value;else o.a=num(t.value)}}
+    if(t.id==="obSav"){ob.sav=num(t.value);const c=previewSplit(),p=$("#obPrev"),dd=$("#obDay");if(p)p.textContent=f(c.P-ob.sav);if(dd)dd.textContent=f((c.P-ob.sav)/30)}
+    if(t.inputMode==="numeric"&&t.id!=="obLN"){const pos=t.value.length;const v=num(t.value);t.value=v?f(v):"";}
+    return}
   if(t.dataset.set){if(t.dataset.set==="remind")s.remind=t.value;else{const v=num(t.value);if(t.dataset.set==="payday")s.payday=Math.min(28,Math.max(1,v||1));else if(v)s[t.dataset.set]=v}
     save("settings");notes();if(t.dataset.set==="remind"||t.dataset.set==="payday"){scheduleNative();reSchedule()}}
   else if(t.dataset.split){s.split[t.dataset.split]=num(t.value);save("settings");notes()}
@@ -738,6 +823,7 @@ document.addEventListener("input",e=>{const t=e.target,s=S.set;
 document.addEventListener("focusout",e=>{const t=e.target;if(t.classList&&t.classList.contains("fmt")&&!t.dataset.split&&t.dataset.asset===undefined&&t.dataset.set!=="payday"&&t.dataset.loan!=="spread"){const v=num(t.value);t.value=v?f(v):""}});
 setSheet(2000);
 render(true);scheduleNative();initDb();initDesktop();
+if(!S.set.onboarded)openOnb();
 document.fonts&&document.fonts.ready.then(()=>{indX=null;moveInd()});
 }
 </script>
