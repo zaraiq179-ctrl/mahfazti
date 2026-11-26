@@ -15,6 +15,8 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
       - run: npm install
+      - name: Bundle fonts for offline use
+        run: node scripts/fonts.mjs
       - name: Bundle Capacitor runtime for plain HTML
         run: |
           mkdir -p www/cap
