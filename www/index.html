@@ -685,7 +685,7 @@ function setView(){
   <div class="card grp">${s.assets.map((x,i)=>`<label class="sr"><span class="sym sm" style="background:${symCol(x.s,i)}">${esc(x.s?String(x.s).slice(0,4):String(x.n).slice(0,1))}</span><span class="sl">${esc(x.n)}<small class="num">${esc(x.s)}</small></span>${val(`data-asset="${i}"`,+x.p,"%","92px")}<button class="trash press" data-act="assetDel" data-i="${i}" aria-label="حذف">${ic("trash")}</button></label>`).join("")}${s.assets.length?"":`<div class="empty" style="padding:16px">ماكو استثمارات. ضيفها من صفحة الاستثمار.</div>`}</div>
   </details>
   <div class="foot">التحذيرات تطلع داخل التطبيق من تسجّل مصروف.</div>
-  <div class="foot" style="text-align:center;margin-top:18px">محفظتي · ${IS_APK||IS_NATIVE()?"أندرويد":IS_WEBAPP?"ويب":"Claude"} · نسخة 12</div>`;
+  <div class="foot" style="text-align:center;margin-top:18px">محفظتي · ${IS_APK||IS_NATIVE()?"أندرويد":IS_WEBAPP?"ويب":"Claude"} · نسخة 13</div>`;
 }
 const SI={money:'<rect x="3" y="6" width="18" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.5"/>',rate:'<path d="M7 7.5h11l-3-3M17 16.5H6l3 3"/>',cal:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
  user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',lock:'<rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/>',chart:'<path d="M3.5 17.5 9 12l4 4 7.5-7.5M15 8.5h5.5V14"/>',
@@ -940,7 +940,7 @@ async function bnSync(force){if(bnBusy||locked)return;if(!force&&Date.now()-bnLa
     if(chk.bad.length){bnErr="هالمفتاح يكدر يتداول أو يسحب. امسحه من بينانس وسوّي واحد قراءة فقط";throw 0}
     const[sp,fu,fl,lo,wa,tk]=await Promise.allSettled([
       sget(cred,"/api/v3/account",{omitZeroBalances:"true"}),
-      sget(cred,"/sapi/v1/asset/get-funding-asset",{needBtcValuation:"false"},"POST"),
+      sget(cred,"/sapi/v1/asset/get-funding-asset",{needBtcValuation:"true"},"POST"),
       sget(cred,"/sapi/v1/simple-earn/flexible/position",{size:"100"}),
       sget(cred,"/sapi/v1/simple-earn/locked/position",{size:"100"}),
       sget(cred,"/sapi/v1/asset/wallet/balance",{quoteAsset:"USDT"}),
@@ -949,7 +949,7 @@ async function bnSync(force){if(bnBusy||locked)return;if(!force&&Date.now()-bnLa
     const H={},add=(a,q,w)=>{q=+q||0;if(!a||q<=0)return;const h=H[a]||(H[a]={a,q:0,w:new Set()});h.q+=q;h.w.add(w)};
     const earnOK=fl.status==="fulfilled"||lo.status==="fulfilled";
     if(sp.status==="fulfilled")(sp.value.balances||[]).forEach(b=>{let a=b.asset;if(/^LD/.test(a)&&a.length>3){if(earnOK)return;a=a.slice(2)}add(a,+b.free+ +b.locked,"Spot")});
-    if(fu.status==="fulfilled")(fu.value||[]).forEach(b=>add(b.asset,+b.free+ +b.locked+ +(b.freeze||0)+ +(b.withdrawing||0),"Funding"));
+    const FR=fu.status==="fulfilled"?(fu.value||[]):[];FR.forEach(b=>add(b.asset,+b.free+ +b.locked+ +(b.freeze||0)+ +(b.withdrawing||0),"Funding"));
     if(fl.status==="fulfilled")((fl.value&&fl.value.rows)||[]).forEach(b=>add(b.asset,b.totalAmount,"Earn"));
     if(lo.status==="fulfilled")((lo.value&&lo.value.rows)||[]).forEach(b=>add(b.asset,b.amount,"Earn"));
     const P={};if(tk.status==="fulfilled")tk.value.forEach(t=>P[t.symbol]=t);
@@ -958,11 +958,12 @@ async function bnSync(force){if(bnBusy||locked)return;if(!force&&Date.now()-bnLa
       const t=P[A+"BTC"],b=P.BTCUSDT;if(t&&b)return{p:+t.lastPrice*+b.lastPrice,c:+t.openPrice?(+t.lastPrice/+t.openPrice-1):0};return null};
     const list=Object.values(H).map(h=>{const r=px(h.a),pl=planMatch(h.a);return{a:h.a,n:h.a.replace(/^EQ_/,""),q:h.q,p:r?r.p:null,v:r?r.p*h.q:null,c:r?r.c:0,w:[...h.w].join(" · "),plan:pl?pl.n:"",ps:pl?pl.s:"",st:STABLE.has(h.a)}})
       .filter(x=>x.v===null||x.v>=.01).sort((x,y)=>(!!y.plan-!!x.plan)||((y.v||0)-(x.v||0)));
+    const btc=P.BTCUSDT?+P.BTCUSDT.lastPrice:0,fraw=FR.map(b=>b.asset+" f"+(+b.free)+" l"+(+b.locked)+" z"+(+b.freeze||0)+" w"+(+b.withdrawing||0)+" ≈$"+(btc*(+b.btcValuation||0)).toFixed(2)).join(" | ");
     const sum=list.reduce((s,x)=>s+(x.v||0),0),day=list.reduce((s,x)=>s+(x.v&&x.c?x.v-x.v/(1+x.c):0),0);
     let wal=null;if(wa.status==="fulfilled"&&Array.isArray(wa.value)){wal=wa.value.filter(w=>+w.balance>0).map(w=>({n:w.walletName,v:+w.balance}))}
     const wsum=wal?wal.reduce((s,w)=>s+w.v,0):0,total=wal&&wsum>0?wsum:sum;
     const hist=((BNS&&BNS.hist)||[]).filter(h=>Date.now()-h.t<90*864e5);hist.push({t:Date.now(),v:total});if(hist.length>120)hist.splice(0,hist.length-120);
-    BNS={t:Date.now(),total,sum,day,list,wal,hist,ip:chk.ip};LS.set("mzBnSnap",BNS);bnLast=Date.now();bnPortNotif();
+    BNS={t:Date.now(),total,sum,day,list,wal,hist,ip:chk.ip,fraw};LS.set("mzBnSnap",BNS);bnLast=Date.now();bnPortNotif();
   }catch(e){if(e!==0)bnErr=bnErrText(e)}
   bnBusy=false;if(tab==="inv"||tab==="set")render(false)}
 function bnAuto(){if(BN_OK&&bnLinked()&&!locked)bnSync(false)}
@@ -995,7 +996,7 @@ function bnList(){if(!BNS||!BNS.list.length)return "";const L=BNS.list,hasPlan=L
   <div class="sec"><span>التفصيل</span></div><div class="card" style="padding:12px 18px">
   ${(BNS.wal||[]).map(w=>`<div class="kv"><span>${esc(w.n)}</span><span class="num">${usd(w.v)}</span></div>`).join("")}
   <div class="kv" style="border-top:.5px solid var(--sep);margin-top:6px;padding-top:10px"><span>مجموع الأصول بأسعار هسه</span><span class="num">${usd(BNS.sum)}</span></div>
-  <div class="foot" style="margin:6px 0 0;direction:ltr;text-align:left">plan: ${esc(S.set.assets.map(x=>x.s||"?").join(","))}</div></div>`}
+  <div class="foot" style="margin:6px 0 0;direction:ltr;text-align:left">plan: ${esc(S.set.assets.map(x=>x.s||"?").join(","))}<br>funding: ${esc(BNS.fraw||"")}</div></div>`}
 function secSection(){const on=!!(LK&&LK.hash);
   return `<div class="sec"><span>الحماية</span></div><div class="card grp">
   <div class="sr"><span class="sic" style="--c:${on?"#34c759":"#8e8e93"}">${svg(SI.lock)}</span><span class="sl">قفل التطبيق<small>${on?"مفعّل · يقفل إذا طلعت أكثر من 30 ثانية":"بدون قفل"}</small></span>${on?`<button class="pill press" data-act="pinChange" style="width:auto;margin:0;padding:0 12px">غيّر</button><button class="pill press" data-act="pinOff" style="width:auto;margin:0 6px 0 0;padding:0 12px;color:var(--red)">شيله</button>`:`<button class="pill g press" data-act="pinSet" style="width:auto;margin:0;padding:0 14px">فعّل</button>`}</div></div>`}
