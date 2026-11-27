@@ -685,7 +685,7 @@ function setView(){
   <div class="card grp">${s.assets.map((x,i)=>`<label class="sr"><span class="sym sm" style="background:${symCol(x.s,i)}">${esc(x.s?String(x.s).slice(0,4):String(x.n).slice(0,1))}</span><span class="sl">${esc(x.n)}<small class="num">${esc(x.s)}</small></span>${val(`data-asset="${i}"`,+x.p,"%","92px")}<button class="trash press" data-act="assetDel" data-i="${i}" aria-label="حذف">${ic("trash")}</button></label>`).join("")}${s.assets.length?"":`<div class="empty" style="padding:16px">ماكو استثمارات. ضيفها من صفحة الاستثمار.</div>`}</div>
   </details>
   <div class="foot">التحذيرات تطلع داخل التطبيق من تسجّل مصروف.</div>
-  <div class="foot" style="text-align:center;margin-top:18px">محفظتي · ${IS_APK||IS_NATIVE()?"أندرويد":IS_WEBAPP?"ويب":"Claude"} · نسخة 13</div>`;
+  <div class="foot" style="text-align:center;margin-top:18px">محفظتي · ${IS_APK||IS_NATIVE()?"أندرويد":IS_WEBAPP?"ويب":"Claude"} · نسخة 14</div>`;
 }
 const SI={money:'<rect x="3" y="6" width="18" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.5"/>',rate:'<path d="M7 7.5h11l-3-3M17 16.5H6l3 3"/>',cal:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
  user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',lock:'<rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/>',chart:'<path d="M3.5 17.5 9 12l4 4 7.5-7.5M15 8.5h5.5V14"/>',
@@ -953,10 +953,11 @@ async function bnSync(force){if(bnBusy||locked)return;if(!force&&Date.now()-bnLa
     if(fl.status==="fulfilled")((fl.value&&fl.value.rows)||[]).forEach(b=>add(b.asset,b.totalAmount,"Earn"));
     if(lo.status==="fulfilled")((lo.value&&lo.value.rows)||[]).forEach(b=>add(b.asset,b.amount,"Earn"));
     const P={};if(tk.status==="fulfilled")tk.value.forEach(t=>P[t.symbol]=t);
-    const px=a=>{const A=a.replace(/^EQ_/,"");if(STABLE.has(A))return{p:1,c:0};
+    const BV={},btcP=P.BTCUSDT?+P.BTCUSDT.lastPrice:0;FR.forEach(b=>{const q=+b.free+ +b.locked+ +(b.freeze||0)+ +(b.withdrawing||0);if(q>0&&+b.btcValuation&&btcP)BV[b.asset]=+b.btcValuation*btcP/q});
+    const px=a=>{if(/^EQ_/.test(a))return BV[a]?{p:BV[a],c:0}:null;const A=a;if(STABLE.has(A))return{p:1,c:0};
       for(const q of["USDT","USDC","FDUSD"]){const t=P[A+q];if(t&&+t.lastPrice)return{p:+t.lastPrice,c:+t.openPrice?(+t.lastPrice/+t.openPrice-1):0}}
       const t=P[A+"BTC"],b=P.BTCUSDT;if(t&&b)return{p:+t.lastPrice*+b.lastPrice,c:+t.openPrice?(+t.lastPrice/+t.openPrice-1):0};return null};
-    const list=Object.values(H).map(h=>{const r=px(h.a),pl=planMatch(h.a);return{a:h.a,n:h.a.replace(/^EQ_/,""),q:h.q,p:r?r.p:null,v:r?r.p*h.q:null,c:r?r.c:0,w:[...h.w].join(" · "),plan:pl?pl.n:"",ps:pl?pl.s:"",st:STABLE.has(h.a)}})
+    const list=Object.values(H).map(h=>{const r=px(h.a),pl=planMatch(h.a);return{a:h.a,n:h.a.replace(/^EQ_/,""),eq:/^EQ_/.test(h.a),q:h.q,p:r?r.p:null,v:r?r.p*h.q:null,c:r?r.c:0,w:[...h.w].join(" · "),plan:pl?pl.n:"",ps:pl?pl.s:"",st:STABLE.has(h.a)}})
       .filter(x=>x.v===null||x.v>=.01).sort((x,y)=>(!!y.plan-!!x.plan)||((y.v||0)-(x.v||0)));
     const btc=P.BTCUSDT?+P.BTCUSDT.lastPrice:0,fraw=FR.map(b=>b.asset+" f"+(+b.free)+" l"+(+b.locked)+" z"+(+b.freeze||0)+" w"+(+b.withdrawing||0)+" ≈$"+(btc*(+b.btcValuation||0)).toFixed(2)).join(" | ");
     const sum=list.reduce((s,x)=>s+(x.v||0),0),day=list.reduce((s,x)=>s+(x.v&&x.c?x.v-x.v/(1+x.c):0),0);
@@ -989,14 +990,14 @@ function bnCard(){
     <div class="bng"><div><small>${up?"الربح":"الخسارة"} الكلي</small>${cap>0?`<b class="num ${up?"up":"dn"}">${sgn(pl)}</b><span class="num ${up?"up":"dn"}" style="font-size:13px">${(up?"+":"")+pp.toFixed(1)}%</span>`:`<button class="bnset press" data-act="bnGo">حدد شكد حطيت ‹</button>`}</div><div><small>اليوم</small><b class="num ${dc>=0?"up":"dn"}">${sgn(dc)}</b><span class="num ${dc>=0?"up":"dn"}" style="font-size:13px">${BNS.total?(dc>=0?"+":"")+(dc/(BNS.total-dc)*100).toFixed(2)+"%":""}</span></div></div>
     <small class="bnu">${bnErr?esc(bnErr):bnBusy?"دا يحدّث…":"آخر تحديث "+ago(BNS.t)}</small></div>`}
 function bnList(){if(!BNS||!BNS.list.length)return "";const L=BNS.list,hasPlan=L.some(x=>x.plan);
-  const row=(x,i)=>`<div class="row"><span class="sym" style="background:${x.plan?symCol(x.ps,i):x.st?"#26a17b":SYMC[(i+3)%SYMC.length]}">${esc((x.ps||x.n).slice(0,4))}</span><div class="grow"><div>${esc(x.plan||x.n)}</div><div class="s"><span class="num">${+x.q.toPrecision(6)}</span> ${esc(x.n)} · ${esc(x.w)}</div></div><div style="text-align:left"><b class="num">${x.v!=null?usd(x.v):"—"}</b><div class="s num ${x.c>0?"up":x.c<0?"dn":""}">${x.v!=null&&!x.st?(x.c>=0?"+":"")+(x.c*100).toFixed(2)+"%":x.v==null?"بدون سعر":""}</div></div></div>`;
+  const row=(x,i)=>`<div class="row"><span class="sym" style="background:${x.plan?symCol(x.ps,i):x.st?"#26a17b":SYMC[(i+3)%SYMC.length]}">${esc((x.ps||x.n).slice(0,4))}</span><div class="grow"><div>${esc(x.plan||(x.eq?"سهم "+x.n:x.n))}</div><div class="s"><span class="num">${+x.q.toPrecision(6)}</span> ${esc(x.n)} · ${esc(x.w)}</div></div><div style="text-align:left"><b class="num">${x.v!=null?usd(x.v):"—"}</b><div class="s num ${x.c>0?"up":x.c<0?"dn":""}">${x.v!=null&&!x.st?(x.c>=0?"+":"")+(x.c*100).toFixed(2)+"%":x.v==null?"بدون سعر":""}</div></div></div>`;
   return `<div class="sec"><span>كل اللي عندك ببينانس</span><span>${L.length} أصل</span></div>
   <div class="card list" style="padding:4px 0">${L.map(row).join("")}${BNS.wal&&BNS.total-BNS.sum>1?`<div class="row"><span class="sym" style="background:#8e8e93">…</span><div class="grow"><div>أرصدة ثانية</div><div class="s">${esc(BNS.wal.map(w=>w.n).join("، "))}</div></div><b class="num">${usd(BNS.total-BNS.sum)}</b></div>`:""}</div>
   ${hasPlan?`<div class="foot">اللي بأولها اسم واضح هي من خطتك.</div>`:""}
   <div class="sec"><span>التفصيل</span></div><div class="card" style="padding:12px 18px">
   ${(BNS.wal||[]).map(w=>`<div class="kv"><span>${esc(w.n)}</span><span class="num">${usd(w.v)}</span></div>`).join("")}
   <div class="kv" style="border-top:.5px solid var(--sep);margin-top:6px;padding-top:10px"><span>مجموع الأصول بأسعار هسه</span><span class="num">${usd(BNS.sum)}</span></div>
-  <div class="foot" style="margin:6px 0 0;direction:ltr;text-align:left">plan: ${esc(S.set.assets.map(x=>x.s||"?").join(","))}<br>funding: ${esc(BNS.fraw||"")}</div></div>`}
+  </div><div class="foot">هذا اللي تكدر بينانس تقراه من برا. أصول Alpha ما تنقرا، فإذا عندك منها، رقم بينانس يطلع أكبر بقيمتها.</div>`}
 function secSection(){const on=!!(LK&&LK.hash);
   return `<div class="sec"><span>الحماية</span></div><div class="card grp">
   <div class="sr"><span class="sic" style="--c:${on?"#34c759":"#8e8e93"}">${svg(SI.lock)}</span><span class="sl">قفل التطبيق<small>${on?"مفعّل · يقفل إذا طلعت أكثر من 30 ثانية":"بدون قفل"}</small></span>${on?`<button class="pill press" data-act="pinChange" style="width:auto;margin:0;padding:0 12px">غيّر</button><button class="pill press" data-act="pinOff" style="width:auto;margin:0 6px 0 0;padding:0 12px;color:var(--red)">شيله</button>`:`<button class="pill g press" data-act="pinSet" style="width:auto;margin:0;padding:0 14px">فعّل</button>`}</div></div>`}
