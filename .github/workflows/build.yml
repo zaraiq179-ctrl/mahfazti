@@ -43,6 +43,8 @@ jobs:
       - run: npm install
       - name: Bundle fonts for offline use
         run: node scripts/fonts.mjs
+      - name: Keep only the app in the APK (other sites stay on the web)
+        run: rm -rf www/albasheer
       - name: Bundle Capacitor runtime for plain HTML
         run: |
           mkdir -p www/cap
