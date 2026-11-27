@@ -51,7 +51,8 @@ jobs:
           cp node_modules/@capacitor/core/dist/capacitor.js www/cap/capacitor.js
           cp node_modules/@capacitor/local-notifications/dist/plugin.js www/cap/ln.js
           cp node_modules/@capacitor/haptics/dist/plugin.js www/cap/haptics.js
-          sed -i 's#</head>#<script src="cap/capacitor.js"></script><script src="cap/ln.js"></script><script src="cap/haptics.js"></script>\n</head>#' www/index.html
+          cp node_modules/@capacitor/background-runner/dist/plugin.js www/cap/br.js
+          sed -i 's#</head>#<script src="cap/capacitor.js"></script><script src="cap/ln.js"></script><script src="cap/haptics.js"></script><script src="cap/br.js"></script>\n</head>#' www/index.html
           grep -c 'cap/ln.js' www/index.html
       - name: App icon
         run: sudo apt-get update && sudo apt-get install -y librsvg2-bin && rsvg-convert -w 1024 -h 1024 assets/icon.svg -o assets/icon-only.png
@@ -70,6 +71,11 @@ jobs:
           grep -o 'android:allowBackup="false"' $M
       - run: npx @capacitor/assets generate --android --iconBackgroundColor '#1463FF' --iconBackgroundColorDark '#1463FF'
       - run: npx cap sync android
+      - name: Background runner engine (price alerts while the app is closed)
+        run: |
+          G=android/app/build.gradle
+          sed -i "s#dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'#&\n        dirs '../../node_modules/@capacitor/background-runner/android/src/main/libs', 'libs'#" $G
+          grep -c "background-runner/android/src/main/libs" $G
       - name: New version number every build so Android installs it as an update
         run: |
           G=android/app/build.gradle

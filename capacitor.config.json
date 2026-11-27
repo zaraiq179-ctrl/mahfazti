@@ -8,6 +8,14 @@
     },
     "CapacitorHttp": {
       "enabled": true
+    },
+    "BackgroundRunner": {
+      "label": "com.mahfazti.prices",
+      "src": "runners/background.js",
+      "event": "checkPrices",
+      "repeat": true,
+      "interval": 30,
+      "autoStart": true
     }
   },
   "android": {

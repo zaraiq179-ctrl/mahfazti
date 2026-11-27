@@ -649,7 +649,7 @@ function setView(){
     ${row("cal","#ff3b30","يوم الراتب",val('data-set="payday"',s.payday,"بالشهر","92px"))}
     ${row("bell","#ff9500","تذكير المصاريف",`<span class="sv" style="width:auto"><input data-set="remind" type="time" value="${esc(s.remind)}"></span>`,"كل يوم")}
   </div>
-  ${secSection()}${bnSection()}${natSection()}${deskSection()}${iosSection()}
+  ${secSection()}${bnSection()}${alSection()}${natSection()}${deskSection()}${iosSection()}
   <details class="adv"${advOpen?" open":""}><summary class="press soft"><span class="sic" style="--c:#8e8e93">${ic("box")}</span><span class="sl">إعدادات متقدمة<small>التقسيم، الادخار، السلفة، الالتزامات، الأسهم</small></span><span class="chev">‹</span></summary>
   <div class="sec"><span>التقسيم</span><span class="num" id="splitTot" style="color:${Math.abs(tot-100)>.05?"var(--red)":"var(--green)"}">${+tot.toFixed(1)}%</span></div>
   <div class="card grp">
@@ -685,7 +685,7 @@ function setView(){
   <div class="card grp">${s.assets.map((x,i)=>`<label class="sr"><span class="sym sm" style="background:${symCol(x.s,i)}">${esc(x.s?String(x.s).slice(0,4):String(x.n).slice(0,1))}</span><span class="sl">${esc(x.n)}<small class="num">${esc(x.s)}</small></span>${val(`data-asset="${i}"`,+x.p,"%","92px")}<button class="trash press" data-act="assetDel" data-i="${i}" aria-label="حذف">${ic("trash")}</button></label>`).join("")}${s.assets.length?"":`<div class="empty" style="padding:16px">ماكو استثمارات. ضيفها من صفحة الاستثمار.</div>`}</div>
   </details>
   <div class="foot">التحذيرات تطلع داخل التطبيق من تسجّل مصروف.</div>
-  <div class="foot" style="text-align:center;margin-top:18px">محفظتي · ${IS_APK||IS_NATIVE()?"أندرويد":IS_WEBAPP?"ويب":"Claude"} · نسخة 15</div>`;
+  <div class="foot" style="text-align:center;margin-top:18px">محفظتي · ${IS_APK||IS_NATIVE()?"أندرويد":IS_WEBAPP?"ويب":"Claude"} · نسخة 16</div>`;
 }
 const SI={money:'<rect x="3" y="6" width="18" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.5"/>',rate:'<path d="M7 7.5h11l-3-3M17 16.5H6l3 3"/>',cal:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
  user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',lock:'<rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/>',chart:'<path d="M3.5 17.5 9 12l4 4 7.5-7.5M15 8.5h5.5V14"/>',
@@ -955,16 +955,16 @@ async function bnSync(force){if(bnBusy||locked)return;if(!force&&Date.now()-bnLa
     const P={};if(tk.status==="fulfilled")tk.value.forEach(t=>P[t.symbol]=t);
     const BV={},btcP=P.BTCUSDT?+P.BTCUSDT.lastPrice:0;FR.forEach(b=>{const q=+b.free+ +b.locked+ +(b.freeze||0)+ +(b.withdrawing||0);if(q>0&&+b.btcValuation&&btcP)BV[b.asset]=+b.btcValuation*btcP/q});
     const px=a=>{if(/^EQ_/.test(a))return BV[a]?{p:BV[a],c:0}:null;const A=a;if(STABLE.has(A))return{p:1,c:0};
-      for(const q of["USDT","USDC","FDUSD"]){const t=P[A+q];if(t&&+t.lastPrice)return{p:+t.lastPrice,c:+t.openPrice?(+t.lastPrice/+t.openPrice-1):0}}
+      for(const q of["USDT","USDC","FDUSD"]){const t=P[A+q];if(t&&+t.lastPrice)return{p:+t.lastPrice,c:+t.openPrice?(+t.lastPrice/+t.openPrice-1):0,sym:A+q}}
       const t=P[A+"BTC"],b=P.BTCUSDT;if(t&&b)return{p:+t.lastPrice*+b.lastPrice,c:+t.openPrice?(+t.lastPrice/+t.openPrice-1):0};return null};
-    const list=Object.values(H).map(h=>{const r=px(h.a),pl=planMatch(h.a);return{a:h.a,n:h.a.replace(/^EQ_/,""),eq:/^EQ_/.test(h.a),q:h.q,p:r?r.p:null,v:r?r.p*h.q:null,c:r?r.c:0,w:[...h.w].join(" · "),plan:pl?pl.n:"",ps:pl?pl.s:"",st:STABLE.has(h.a)}})
+    const list=Object.values(H).map(h=>{const r=px(h.a),pl=planMatch(h.a);return{a:h.a,n:h.a.replace(/^EQ_/,""),eq:/^EQ_/.test(h.a),q:h.q,p:r?r.p:null,v:r?r.p*h.q:null,c:r?r.c:0,sym:r&&r.sym||"",w:[...h.w].join(" · "),plan:pl?pl.n:"",ps:pl?pl.s:"",st:STABLE.has(h.a)}})
       .filter(x=>x.v===null||x.v>=.01).sort((x,y)=>(!!y.plan-!!x.plan)||((y.v||0)-(x.v||0)));
     const btc=P.BTCUSDT?+P.BTCUSDT.lastPrice:0,fraw=FR.map(b=>b.asset+" f"+(+b.free)+" l"+(+b.locked)+" z"+(+b.freeze||0)+" w"+(+b.withdrawing||0)+" ≈$"+(btc*(+b.btcValuation||0)).toFixed(2)).join(" | ");
     const sum=list.reduce((s,x)=>s+(x.v||0),0),day=list.reduce((s,x)=>s+(x.v&&x.c?x.v-x.v/(1+x.c):0),0);
     let wal=null;if(wa.status==="fulfilled"&&Array.isArray(wa.value)){wal=wa.value.filter(w=>+w.balance>0).map(w=>({n:w.walletName,v:+w.balance}))}
     const wsum=wal?wal.reduce((s,w)=>s+w.v,0):0,total=wal&&wsum>0?wsum:sum;
     const hist=((BNS&&BNS.hist)||[]).filter(h=>Date.now()-h.t<90*864e5);hist.push({t:Date.now(),v:total});if(hist.length>120)hist.splice(0,hist.length-120);
-    BNS={t:Date.now(),total,sum,day,list,wal,hist,ip:chk.ip,fraw};if(!BNBASE&&total>0){BNBASE={v:total,t:Date.now()};LS.set("mzBnBase",BNBASE)}LS.set("mzBnSnap",BNS);bnLast=Date.now();bnPortNotif();
+    BNS={t:Date.now(),total,sum,day,list,wal,hist,ip:chk.ip,fraw};if(!BNBASE&&total>0){BNBASE={v:total,t:Date.now()};LS.set("mzBnBase",BNBASE)}LS.set("mzBnSnap",BNS);bnLast=Date.now();bnPortNotif();alPush(false);
   }catch(e){if(e!==0)bnErr=bnErrText(e)}
   bnBusy=false;if(tab==="inv"||tab==="set")render(false)}
 function bnAuto(){if(BN_OK&&bnLinked()&&!locked)bnSync(false)}
@@ -1039,6 +1039,27 @@ document.addEventListener("input",e=>{const t=e.target;if(t.id==="bnK")bnForm.k=
   else if(t.dataset&&t.dataset.bncap!==undefined){const v=parseFloat(digits(t.value).replace(/[^\d.]/g,""));BNCAP=isNaN(v)?null:v;LS.set("mzBnCap",BNCAP)}});
 document.addEventListener("focusout",e=>{if(e.target.dataset&&e.target.dataset.bncap!==undefined)bnPortNotif()});
 
+
+/* ---- price alerts: a background runner checks public prices every ~30 min, even with the app closed ---- */
+let AL=LS.get("mzAlert")||{on:false,up:10,dn:10};
+const BR=()=>plug("BackgroundRunner","capacitorBackgroundRunner");
+let alState="";
+async function alPush(reset){const br=BR();if(!br||!BNS)return;
+  const items=BNS.list.filter(x=>x.sym&&!x.st&&x.v>=1).map(x=>({sym:x.sym,n:x.plan||x.n,ref:x.p}));
+  try{await br.dispatchEvent({label:"com.mahfazti.prices",event:"setConfig",details:{cfg:{on:!!AL.on,up:+AL.up||10,dn:+AL.dn||10,items},reset:!!reset}});alState="ok"}
+  catch(e){alState=String(e&&e.message||e).slice(0,80)}}
+function alSection(){if(!BN_OK||!bnLinked())return "";
+  return `<div class="sec"><span>تنبيهات الأسعار</span></div><div class="card grp">
+  <div class="sr"><span class="sic" style="--c:${AL.on?"#ff9500":"#8e8e93"}">${svg(SI.bell)}</span><span class="sl">نبهني إذا تحرك سعر<small>${AL.on?"يفحص الأسعار كل نص ساعة تقريباً، حتى والتطبيق مسدود":"مطفي"}</small></span><button class="pill ${AL.on?"":"g "}press" data-act="alToggle" style="width:auto;margin:0;padding:0 14px">${AL.on?"طفّي":"شغّل"}</button></div>
+  ${AL.on?`<label class="sr"><span class="sic" style="--c:#34c759">${svg(SI.chart)}</span><span class="sl">إذا صعد أكثر من</span><span class="sv" style="width:92px"><input data-al="up" inputmode="numeric" value="${+AL.up}"><em>%</em></span></label>
+  <label class="sr"><span class="sic" style="--c:#ff3b30">${svg(SI.chart)}</span><span class="sl">إذا نزل أكثر من</span><span class="sv" style="width:92px"><input data-al="dn" inputmode="numeric" value="${+AL.dn}"><em>%</em></span></label>`:""}
+  </div>${AL.on?`<div class="foot">يقارن بالسعر وقت ما شغّلت التنبيه. بعد كل تنبيه يبدي يقارن من السعر الجديد. التنبيه بس يخبرك، والقرار إلك.${alState&&alState!=="ok"?" · "+esc(alState):""}</div>`:""}`}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-act=alToggle]");if(!t)return;
+  AL.on=!AL.on;LS.set("mzAlert",AL);hap(AL.on?"ok":undefined);
+  const ln=LN();if(AL.on&&ln)ln.requestPermissions().catch(()=>{});
+  alPush(true).then(()=>{render(false);if(AL.on)toast("تشغّلت تنبيهات الأسعار")})});
+document.addEventListener("input",e=>{const t=e.target;if(!t.dataset||!t.dataset.al)return;AL[t.dataset.al]=Math.max(1,Math.min(90,num(t.value)||10));LS.set("mzAlert",AL);clearTimeout(alT);alT=setTimeout(()=>alPush(true),800)});
+let alT=null;
 /* ---------- events ---------- */
 $("#fab").addEventListener("click",openSheet);
 document.addEventListener("click",e=>{
