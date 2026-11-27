@@ -685,7 +685,7 @@ function setView(){
   <div class="card grp">${s.assets.map((x,i)=>`<label class="sr"><span class="sym sm" style="background:${symCol(x.s,i)}">${esc(x.s?String(x.s).slice(0,4):String(x.n).slice(0,1))}</span><span class="sl">${esc(x.n)}<small class="num">${esc(x.s)}</small></span>${val(`data-asset="${i}"`,+x.p,"%","92px")}<button class="trash press" data-act="assetDel" data-i="${i}" aria-label="حذف">${ic("trash")}</button></label>`).join("")}${s.assets.length?"":`<div class="empty" style="padding:16px">ماكو استثمارات. ضيفها من صفحة الاستثمار.</div>`}</div>
   </details>
   <div class="foot">التحذيرات تطلع داخل التطبيق من تسجّل مصروف.</div>
-  <div class="foot" style="text-align:center;margin-top:18px">محفظتي · ${IS_APK||IS_NATIVE()?"أندرويد":IS_WEBAPP?"ويب":"Claude"} · نسخة 14</div>`;
+  <div class="foot" style="text-align:center;margin-top:18px">محفظتي · ${IS_APK||IS_NATIVE()?"أندرويد":IS_WEBAPP?"ويب":"Claude"} · نسخة 15</div>`;
 }
 const SI={money:'<rect x="3" y="6" width="18" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.5"/>',rate:'<path d="M7 7.5h11l-3-3M17 16.5H6l3 3"/>',cal:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
  user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',lock:'<rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/>',chart:'<path d="M3.5 17.5 9 12l4 4 7.5-7.5M15 8.5h5.5V14"/>',
@@ -916,10 +916,10 @@ const BN="https://api.binance.com",STABLE=new Set(["USDT","USDC","FDUSD","BUSD",
 const BN_OK=IS_APK||IS_NATIVE();          // signed calls only from the Android build (no CORS there)
 let bnCred=null,bnBusy=false,bnErr="",bnOff=0,bnLast=0,bnForm={k:"",s:""},bnShow=false;
 let BNS=LS.get("mzBnSnap");               // last snapshot, holdings only (no keys)
-let BNCAP=LS.get("mzBnCap");             // what the user says they put in, USD
+let BNBASE=LS.get("mzBnBase");           // starting point {v,t}: value when tracking began
 const bnLinked=()=>!!LS.get("mzBn");
 async function bnGet(){if(bnCred)return bnCred;const b=LS.get("mzBn");if(!b)return null;try{bnCred=await unseal(b);return bnCred}catch(e){return null}}
-async function bnWipe(){LS.set("mzBn",null);LS.set("mzBnSnap",null);bnCred=null;BNS=null;bnErr=""}
+async function bnWipe(){LS.set("mzBn",null);LS.set("mzBnSnap",null);LS.set("mzBnBase",null);BNBASE=null;bnCred=null;BNS=null;bnErr=""}
 async function hj(url,opt={}){const r=await fetch(url,{method:opt.method||"GET",headers:opt.headers||{},cache:"no-store"});let d=null;try{d=await r.json()}catch(e){}
   if(!r.ok){const e=new Error(d&&d.msg?d.msg:"HTTP "+r.status);e.code=d&&d.code;e.status=r.status;throw e}return d}
 async function sig(secret,msg){const k=await crypto.subtle.importKey("raw",TE.encode(secret),{name:"HMAC",hash:"SHA-256"},false,["sign"]);return hex(await crypto.subtle.sign("HMAC",k,TE.encode(msg)))}
@@ -964,11 +964,12 @@ async function bnSync(force){if(bnBusy||locked)return;if(!force&&Date.now()-bnLa
     let wal=null;if(wa.status==="fulfilled"&&Array.isArray(wa.value)){wal=wa.value.filter(w=>+w.balance>0).map(w=>({n:w.walletName,v:+w.balance}))}
     const wsum=wal?wal.reduce((s,w)=>s+w.v,0):0,total=wal&&wsum>0?wsum:sum;
     const hist=((BNS&&BNS.hist)||[]).filter(h=>Date.now()-h.t<90*864e5);hist.push({t:Date.now(),v:total});if(hist.length>120)hist.splice(0,hist.length-120);
-    BNS={t:Date.now(),total,sum,day,list,wal,hist,ip:chk.ip,fraw};LS.set("mzBnSnap",BNS);bnLast=Date.now();bnPortNotif();
+    BNS={t:Date.now(),total,sum,day,list,wal,hist,ip:chk.ip,fraw};if(!BNBASE&&total>0){BNBASE={v:total,t:Date.now()};LS.set("mzBnBase",BNBASE)}LS.set("mzBnSnap",BNS);bnLast=Date.now();bnPortNotif();
   }catch(e){if(e!==0)bnErr=bnErrText(e)}
   bnBusy=false;if(tab==="inv"||tab==="set")render(false)}
 function bnAuto(){if(BN_OK&&bnLinked()&&!locked)bnSync(false)}
-const capOf=()=>BNCAP!=null?+BNCAP:0;
+const capOf=()=>BNBASE?BNBASE.v+Object.values(S.months).filter(m=>m&&m.inv&&+m.inv.at>BNBASE.t).reduce((a,m)=>a+m.inv.iqd/m.inv.rate,0):0;
+const dShort=t=>{const d=new Date(t);return d.getDate()+" "+MONTHS[d.getMonth()]};
 const sgn=n=>(n>=0?"+":"−")+"$"+Math.abs(n).toFixed(2);
 const ago=t=>{const m=Math.round((Date.now()-t)/60000);return m<1?"هسه":m<60?"قبل "+m+" دقيقة":m<1440?"قبل "+Math.round(m/60)+" ساعة":"قبل "+Math.round(m/1440)+" يوم"};
 /* one private notification each morning with the latest known total (content hidden on the lock screen) */
@@ -987,7 +988,7 @@ function bnCard(){
   return `<div class="card bnc"><div class="bnh"><small>محفظتك ببينانس</small><button class="bnr press${bnBusy?" spin":""}" data-act="bnSync" aria-label="تحديث">${svg(SI.repeat)}</button></div>
     <div class="big" style="font-size:40px;margin:2px 0 2px">${N("bnt",BNS.total,"u")}</div>
     <span class="num" style="opacity:.75;font-size:14px">≈ ${f(BNS.total*S.set.rate)} د.ع</span>
-    <div class="bng"><div><small>${up?"الربح":"الخسارة"} الكلي</small>${cap>0?`<b class="num ${up?"up":"dn"}">${sgn(pl)}</b><span class="num ${up?"up":"dn"}" style="font-size:13px">${(up?"+":"")+pp.toFixed(1)}%</span>`:`<button class="bnset press" data-act="bnGo">حدد شكد حطيت ‹</button>`}</div><div><small>اليوم</small><b class="num ${dc>=0?"up":"dn"}">${sgn(dc)}</b><span class="num ${dc>=0?"up":"dn"}" style="font-size:13px">${BNS.total?(dc>=0?"+":"")+(dc/(BNS.total-dc)*100).toFixed(2)+"%":""}</span></div></div>
+    <div class="bng"><div><small>${up?"الربح":"الخسارة"}${BNBASE?" من "+dShort(BNBASE.t):""}</small>${cap>0?`<b class="num ${up?"up":"dn"}">${sgn(pl)}</b><span class="num ${up?"up":"dn"}" style="font-size:13px">${(up?"+":"")+pp.toFixed(1)}%</span>`:`<b style="font-size:14px;font-weight:500;opacity:.8">يبدي من أول تحديث</b>`}</div><div><small>اليوم</small><b class="num ${dc>=0?"up":"dn"}">${sgn(dc)}</b><span class="num ${dc>=0?"up":"dn"}" style="font-size:13px">${BNS.total?(dc>=0?"+":"")+(dc/(BNS.total-dc)*100).toFixed(2)+"%":""}</span></div></div>
     <small class="bnu">${bnErr?esc(bnErr):bnBusy?"دا يحدّث…":"آخر تحديث "+ago(BNS.t)}</small></div>`}
 function bnList(){if(!BNS||!BNS.list.length)return "";const L=BNS.list,hasPlan=L.some(x=>x.plan);
   const row=(x,i)=>`<div class="row"><span class="sym" style="background:${x.plan?symCol(x.ps,i):x.st?"#26a17b":SYMC[(i+3)%SYMC.length]}">${esc((x.ps||x.n).slice(0,4))}</span><div class="grow"><div>${esc(x.plan||(x.eq?"سهم "+x.n:x.n))}</div><div class="s"><span class="num">${+x.q.toPrecision(6)}</span> ${esc(x.n)} · ${esc(x.w)}</div></div><div style="text-align:left"><b class="num">${x.v!=null?usd(x.v):"—"}</b><div class="s num ${x.c>0?"up":x.c<0?"dn":""}">${x.v!=null&&!x.st?(x.c>=0?"+":"")+(x.c*100).toFixed(2)+"%":x.v==null?"بدون سعر":""}</div></div></div>`;
@@ -1005,7 +1006,7 @@ function bnSection(){
   if(!BN_OK)return `<div class="sec"><span>بينانس</span></div><div class="card"><p style="margin:0;font-size:15px;color:var(--ink2)">ربط بينانس يشتغل بتطبيق الأندرويد بس.</p></div>`;
   if(bnLinked()){const cap=capOf();return `<div class="sec" id="bnSec"><span>بينانس</span></div><div class="card grp">
     <div class="sr"><span class="sic" style="--c:#f0b90b">${svg(SI.chart)}</span><span class="sl">مربوط · قراءة فقط<small>${BNS?"آخر تحديث "+ago(BNS.t):"ما تحدّث بعد"}${BNS&&!BNS.ip?" · المفتاح مو مقفول على IP":""}</small></span><button class="pill g press" data-act="bnSync" style="width:auto;margin:0;padding:0 14px">حدّث</button></div>
-    <label class="sr"><span class="sic" style="--c:#5e5ce6">${svg(SI.money)}</span><span class="sl">شكد حطيت بالكلي<small>كل اللي حطيته ببينانس من البداية، حتى نحسب ربحك</small></span><span class="sv" style="width:36%"><input data-bncap inputmode="decimal" value="${cap?cap.toFixed(2):""}" placeholder="0"><em>$</em></span></label>
+    <div class="sr"><span class="sic" style="--c:#5e5ce6">${svg(SI.money)}</span><span class="sl">الربح محسوب من ${BNBASE?dShort(BNBASE.t):"أول تحديث"}<small>${BNBASE?"بدت بـ "+usd(BNBASE.v)+"، وتنضاف عليها استثماراتك المسجلة بعدها":"راح تبدي من أول تحديث"}</small></span>${BNS?`<button class="pill press" data-act="bnBase" style="width:auto;margin:0;padding:0 12px">ابدي من هسه</button>`:""}</div>
     <button class="sr press soft" data-act="bnUnlink"><span class="sic" style="--c:#ff3b30">${svg(SI.trash)}</span><span class="sl" style="color:var(--red)">احذف الربط</span></button></div>
     ${bnErr?`<div class="foot" style="color:var(--red)">${esc(bnErr)}</div>`:""}`}
   return `<div class="sec" id="bnSec"><span>اربط بينانس</span><span>قراءة فقط</span></div><div class="card">
@@ -1028,6 +1029,7 @@ async function bnLinkNow(){const k=($("#bnK").value||"").trim(),s=($("#bnS").val
 document.addEventListener("click",e=>{const t=e.target.closest("[data-act]");if(!t)return;const a=t.dataset.act;
   if(a==="bnGo"){hap();go("set");setTimeout(()=>{const s=$("#bnSec");s&&s.scrollIntoView({behavior:RM?"auto":"smooth"})},350)}
   else if(a==="bnSync"){hap();bnSync(true)}
+  else if(a==="bnBase"&&BNS){BNBASE={v:BNS.total,t:Date.now()};LS.set("mzBnBase",BNBASE);hap("ok");render(false);toast("الربح صار يتحسب من هسه")}
   else if(a==="bnLink")bnLinkNow();
   else if(a==="bnUnlink"){const doit=async()=>{await bnWipe();const ln=LN();ln&&ln.cancel({notifications:[{id:400}]}).catch(()=>{});render(false);hap("warn");toast("انحذف الربط. امسح المفتاح من بينانس هم","o")};LK&&LK.hash?showLock("old",doit):doit()}
   else if(a==="pinSet"){hap();showLock("set")}
