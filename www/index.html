@@ -265,6 +265,34 @@ input.box:focus{box-shadow:0 0 0 2px var(--blue)}
 .island button{color:#0a84ff;font-weight:600;flex:none}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media(prefers-reduced-transparency:reduce){.nav.sc,.tabbar{background:var(--card);backdrop-filter:none;-webkit-backdrop-filter:none}}
+.lk{position:fixed;inset:0;z-index:95;background:var(--bg);display:grid;place-items:center;padding:env(safe-area-inset-top) 24px env(safe-area-inset-bottom)}
+.lk[hidden]{display:none}
+.lkin{width:min(320px,100%);text-align:center}
+.lkic{width:64px;height:64px;border-radius:20px;background:#1463ff;color:#fff;display:grid;place-content:center;margin:0 auto 14px}
+.lkic svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.lk h2{margin:0;font-size:22px;font-weight:700}
+.lk p{color:var(--ink2);margin:6px 0 24px;font-size:15px;min-height:22px}
+.lkd{display:flex;justify-content:center;gap:18px;margin-bottom:36px;direction:ltr}
+.lkd i{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ink3);transition:transform .35s var(--spring),background .12s,border-color .12s}
+.lkd i.on{background:var(--ink);border-color:var(--ink);transform:scale(1.18)}
+.lkp{display:grid;grid-template-columns:repeat(3,76px);gap:16px 26px;justify-content:center;direction:ltr}
+.lkp button{width:76px;height:76px;border-radius:50%;background:var(--card);font:400 30px "Inter",system-ui,sans-serif;box-shadow:var(--shadow)}
+.lkp button.fn{background:none;box-shadow:none;font-size:24px}
+body.veil #view,body.veil .dock{filter:blur(26px)}
+.bnc{background:linear-gradient(150deg,#1e2329,#0b0e11);color:#fff}
+.bnh{display:flex;justify-content:space-between;align-items:center}
+.bnc small{opacity:.72;font-size:13px}
+.bnr{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.12);display:grid;place-content:center}
+.bnr svg{width:18px;height:18px;fill:none;stroke:#f0b90b;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.bnr.spin svg{animation:spin .9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.bng{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;padding-top:12px;border-top:.5px solid rgba(255,255,255,.16)}
+.bng div{display:grid;gap:2px}.bng b{font-size:17px;text-align:start}
+.up{color:var(--green)}.dn{color:var(--red)}.bnc .up{color:#2ebd85}.bnc .dn{color:#f6465d}
+.bnu{display:block;margin-top:10px}.bne{font-size:14px;margin:8px 0 0}
+.bnl{display:flex;align-items:center;gap:12px;width:100%;text-align:start}
+.bns{margin:0 0 6px;padding-inline-start:20px;font-size:15px;line-height:1.7;color:var(--ink2)}.bns b{color:var(--ink);font-weight:600}
+.fl{font-size:13px;color:var(--ink2);display:block;margin:10px 0 4px}
+.cta[disabled]{opacity:.6}
 </style>
 </head>
 <body>
@@ -403,11 +431,11 @@ async function scheduleNative(){const ln=LN();if(!ln)return;
   try{const p=await ln.requestPermissions();nat.perm=p.display;if(p.display!=="granted"){if(tab==="set")render(false);return}
     try{await ln.createChannel({id:"mahfazti",name:"تذكيرات محفظتي",description:"تذكير المصاريف والراتب",importance:5,visibility:1,vibration:true,lights:true,lightColor:"#1463FF"})}catch(e){}
     try{if(ln.checkExactNotificationSetting){const x=await ln.checkExactNotificationSetting();nat.exact=x.exact_alarm||""}}catch(e){}
-    const pend=await ln.getPending();const old=(pend.notifications||[]).filter(n=>+n.id<900);if(old.length)await ln.cancel({notifications:old.map(n=>({id:n.id}))});
+    const pend=await ln.getPending();const old=(pend.notifications||[]).filter(n=>+n.id<900&&+n.id!==400);if(old.length)await ln.cancel({notifications:old.map(n=>({id:n.id}))});
     const[h,mi]=(S.set.remind||"21:00").split(":").map(Number),now=new Date(),pd=Math.min(28,Math.max(1,+S.set.payday||1)),list=[];
     for(let i=0;i<30;i++){const at=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i,h,mi);if(at>now)list.push({id:200+i,title:"محفظتي",body:"سجّلت مصاريف اليوم؟",channelId:"mahfazti",schedule:{at,allowWhileIdle:true}})}
     for(let i=0;i<12;i++){const at=pd===1?new Date(now.getFullYear(),now.getMonth()+i+1,0,18,0):new Date(now.getFullYear(),now.getMonth()+i,pd-1,18,0);if(at>now)list.push({id:300+i,title:"محفظتي",body:"راتبك المفروض باچر ينزل. لا تنسى الاستثمار والادخار",channelId:"mahfazti",schedule:{at,allowWhileIdle:true}})}
-    await ln.schedule({notifications:list});nat.pending=list.length;nat.err="";
+    await ln.schedule({notifications:list});nat.pending=list.length;nat.err="";if(typeof bnPortNotif==="function")bnPortNotif();
   }catch(e){nat.err=String(e&&e.message||e).slice(0,160)}
   if(tab==="set")render(false)}
 const IS_APK=location.hostname==="localhost";
@@ -579,11 +607,13 @@ function invView(){
   const hist=Object.keys(S.months).filter(k=>S.months[k]&&S.months[k].inv).sort().reverse();
   const totI=hist.reduce((a,k)=>a+S.months[k].inv.iqd,0),totU=hist.reduce((a,k)=>a+S.months[k].inv.iqd/S.months[k].inv.rate,0);
   if(!c.I){const li=c.li;return `<div class="lt"><h1>الاستثمار</h1><p>${mlabel(c.k)}</p></div>
+  ${bnCard()}
   <div class="card ih"><small>الاستثمار متوقف هالشهر</small><div class="big" style="font-size:30px;margin:4px 0">لحد ${MONTHS[+li.L.end.split("-")[1]-1]} ${li.L.end.split("-")[0]}</div><span style="font-size:15px">قسط ${esc(li.L.n)} (${f(li.L.a)}) هو ادخارك هالفترة. ب${MONTHS[+li.pay.split("-")[1]-1]} تستلم ${f(li.L.payout)}، وتستثمر ${f((li.L.payout-li.L.emerg)/(+li.L.spread||4))} إضافي كل شهر لمدة ${+li.L.spread||4} أشهر.</span></div>
   <div class="sec"><span>المجموع لحد الآن</span></div>
   <div class="card"><div style="display:flex;justify-content:space-between;align-items:end"><div><small style="color:var(--ink2);font-size:13px">بالدولار</small><div class="big">${N("tu",totU,"u")}</div></div><div style="text-align:left"><small style="color:var(--ink2);font-size:13px">بالدينار</small><div style="font-size:20px;font-weight:600">${N("ti",totI)}</div></div></div>
-  ${hist.map(k=>`<div class="kv" style="border-top:.5px solid var(--sep);padding:10px 0;margin-top:6px"><span style="color:var(--ink)">${mlabel(k)}</span><span class="num">${usd(S.months[k].inv.iqd/S.months[k].inv.rate)}</span></div>`).join("")}</div>`}
+  ${hist.map(k=>`<div class="kv" style="border-top:.5px solid var(--sep);padding:10px 0;margin-top:6px"><span style="color:var(--ink)">${mlabel(k)}</span><span class="num">${usd(S.months[k].inv.iqd/S.months[k].inv.rate)}</span></div>`).join("")}</div>${bnList()}`}
   return `<div class="lt"><h1>الاستثمار</h1><p>${mlabel(c.k)}</p></div>
+  ${bnCard()}
   <div class="card ih"><small>مبلغ هالشهر</small><div class="big" style="font-size:42px">${N("iu",u,"u")}</div><span class="num" style="font-size:15px">${f(c.I)} د.ع · على ${f(c.s.rate)}</span>
     ${c.s.assets.length?`<div class="bar"><i data-w="${bought/c.s.assets.length*100}" id="buyBar"></i></div><small id="buyTxt">اشتريت ${bought} من ${c.s.assets.length}</small>`:""}</div>
   ${c.s.assets.length&&Math.round(sum)!==100?`<div class="card al or"><span class="ic">!</span><p>مجموع نسب الأسهم ${Math.round(sum)}%، لازم يكون 100%</p></div>`:""}
@@ -598,7 +628,7 @@ function invView(){
   <div class="sec"><span>المجموع لحد الآن</span></div>
   <div class="card"><div style="display:flex;justify-content:space-between;align-items:end"><div><small style="color:var(--ink2);font-size:13px">بالدولار</small><div class="big">${N("tu",totU,"u")}</div></div><div style="text-align:left"><small style="color:var(--ink2);font-size:13px">بالدينار</small><div style="font-size:20px;font-weight:600">${N("ti",totI)}</div></div></div>
     ${hist.length?`<div style="margin-top:10px">${hist.map(k=>`<div class="kv" style="border-top:.5px solid var(--sep);padding:10px 0"><span style="color:var(--ink)">${mlabel(k)}</span><span class="num">${usd(S.months[k].inv.iqd/S.months[k].inv.rate)}</span></div>`).join("")}</div>`:`<div class="foot" style="margin:8px 0 0">ما سجّلت أي شهر بعد.</div>`}
-  </div><div class="foot">المبالغ بالدولار حسب سعر الصرف يوم الشراء، مو قيمة محفظتك الحالية.</div>`;
+  </div><div class="foot">المبالغ بالدولار حسب سعر الصرف يوم الشراء، مو قيمة محفظتك الحالية.</div>${bnList()}`;
 }
 
 function setView(){
@@ -618,7 +648,7 @@ function setView(){
     ${row("cal","#ff3b30","يوم الراتب",val('data-set="payday"',s.payday,"بالشهر","92px"))}
     ${row("bell","#ff9500","تذكير المصاريف",`<span class="sv" style="width:auto"><input data-set="remind" type="time" value="${esc(s.remind)}"></span>`,"كل يوم")}
   </div>
-  ${natSection()}${deskSection()}${iosSection()}
+  ${secSection()}${bnSection()}${natSection()}${deskSection()}${iosSection()}
   <details class="adv"${advOpen?" open":""}><summary class="press soft"><span class="sic" style="--c:#8e8e93">${ic("box")}</span><span class="sl">إعدادات متقدمة<small>التقسيم، الادخار، السلفة، الالتزامات، الأسهم</small></span><span class="chev">‹</span></summary>
   <div class="sec"><span>التقسيم</span><span class="num" id="splitTot" style="color:${Math.abs(tot-100)>.05?"var(--red)":"var(--green)"}">${+tot.toFixed(1)}%</span></div>
   <div class="card grp">
@@ -654,7 +684,7 @@ function setView(){
   <div class="card grp">${s.assets.map((x,i)=>`<label class="sr"><span class="sym sm" style="background:${symCol(x.s,i)}">${esc(x.s?String(x.s).slice(0,4):String(x.n).slice(0,1))}</span><span class="sl">${esc(x.n)}<small class="num">${esc(x.s)}</small></span>${val(`data-asset="${i}"`,+x.p,"%","92px")}<button class="trash press" data-act="assetDel" data-i="${i}" aria-label="حذف">${ic("trash")}</button></label>`).join("")}${s.assets.length?"":`<div class="empty" style="padding:16px">ماكو استثمارات. ضيفها من صفحة الاستثمار.</div>`}</div>
   </details>
   <div class="foot">التحذيرات تطلع داخل التطبيق من تسجّل مصروف.</div>
-  <div class="foot" style="text-align:center;margin-top:18px">محفظتي · ${IS_APK||IS_NATIVE()?"أندرويد":IS_WEBAPP?"ويب":"Claude"} · نسخة 10</div>`;
+  <div class="foot" style="text-align:center;margin-top:18px">محفظتي · ${IS_APK||IS_NATIVE()?"أندرويد":IS_WEBAPP?"ويب":"Claude"} · نسخة 11</div>`;
 }
 const SI={money:'<rect x="3" y="6" width="18" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.5"/>',rate:'<path d="M7 7.5h11l-3-3M17 16.5H6l3 3"/>',cal:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
  user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/>',lock:'<rect x="5" y="10" width="14" height="10" rx="2.5"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/>',chart:'<path d="M3.5 17.5 9 12l4 4 7.5-7.5M15 8.5h5.5V14"/>',
@@ -825,6 +855,181 @@ function obFinish(){const s=S.set,d=new Date();
   s.sav=Object.assign(clone(DEF.sav),s.sav||{},{monthly:num(ob.sav)});
   s.onboarded=true;save("settings");closeOnb();tab="home";prevFrac=null;render(true);scheduleNative();reSchedule();hap("ok");toast("كلشي جاهز، أهلاً بيك")}
 
+/* ---------- app lock + Binance (read-only) ---------- */
+const LS={get:k=>{try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set:(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const TE=new TextEncoder(),hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join(""),unhex=h=>new Uint8Array(h.match(/../g).map(x=>parseInt(x,16)));
+const HAS_CRYPTO=!!(window.crypto&&crypto.subtle&&window.indexedDB);
+/* device key: AES-256-GCM, created on this phone, marked non-extractable, so even the app's own code can't read it out */
+function kdb(){return new Promise((res,rej)=>{const r=indexedDB.open("mz-keys",1);r.onupgradeneeded=()=>r.result.createObjectStore("k");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function devKey(){const db=await kdb();
+  let k=await new Promise((res,rej)=>{const q=db.transaction("k").objectStore("k").get("aes");q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)});
+  if(!k){k=await crypto.subtle.generateKey({name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
+    await new Promise((res,rej)=>{const t=db.transaction("k","readwrite");t.objectStore("k").put(k,"aes");t.oncomplete=res;t.onerror=()=>rej(t.error)})}
+  return k}
+async function seal(obj){const iv=crypto.getRandomValues(new Uint8Array(12)),ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},await devKey(),TE.encode(JSON.stringify(obj)));return{iv:hex(iv),ct:hex(ct)}}
+async function unseal(b){const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:unhex(b.iv)},await devKey(),unhex(b.ct));return JSON.parse(new TextDecoder().decode(pt))}
+async function pinHash(pin,salt){const base=await crypto.subtle.importKey("raw",TE.encode(pin),"PBKDF2",false,["deriveBits"]);
+  return hex(await crypto.subtle.deriveBits({name:"PBKDF2",salt:unhex(salt),iterations:150000,hash:"SHA-256"},base,256))}
+
+/* ---- lock ---- */
+let LK=LS.get("mzLock");            // {salt,hash,fails,until}
+let locked=!!(LK&&LK.hash),lkMode="unlock",lkBuf="",lkFirst="",lkNext=null,hiddenAt=0;
+const lockEl=document.createElement("div");lockEl.className="lk";lockEl.id="lk";lockEl.hidden=true;document.body.appendChild(lockEl);
+function lkTitle(){return {unlock:"اكتب رمز القفل",set:"اختار رمز من 4 أرقام",confirm:"اكتب الرمز مرة ثانية",old:"اكتب رمزك الحالي"}[lkMode]}
+function drawLock(msg=""){const wait=LK&&LK.until>Date.now()?Math.ceil((LK.until-Date.now())/1000):0;
+  lockEl.innerHTML=`<div class="lkin"><div class="lkic">${svg(SI.lock)}</div><h2>${lkMode==="unlock"?"محفظتي مقفولة":"رمز القفل"}</h2><p id="lkMsg">${esc(wait?"انتظر "+wait+" ثانية وجرّب":msg||lkTitle())}</p>
+  <div class="lkd" id="lkd">${[0,1,2,3].map(i=>`<i class="${i<lkBuf.length?"on":""}"></i>`).join("")}</div>
+  <div class="lkp">${["1","2","3","4","5","6","7","8","9","","0","⌫"].map(k=>k?`<button class="press${k==="⌫"?" fn":""}" data-pin="${k}">${k}</button>`:`<span></span>`).join("")}</div>
+  ${lkMode!=="unlock"?`<button class="tb press" data-pin="x" style="margin-top:14px">إلغاء</button>`:""}</div>`;
+  if(wait)setTimeout(()=>{if(!lockEl.hidden&&LK&&LK.until<=Date.now()+50)drawLock()},1000)}
+function showLock(mode,next){lkMode=mode;lkBuf="";lkFirst="";lkNext=next||null;lockEl.hidden=false;document.body.classList.add("lock");drawLock();
+  if(!RM){lockEl.animate([{opacity:0,transform:"scale(1.04)"},{opacity:1,transform:"none"}],{duration:280,easing:"cubic-bezier(.2,.9,.25,1)"})}}
+function hideLock(){if(lockEl.hidden)return;const done=()=>{lockEl.hidden=true;if(!$("#onb")||$("#onb").hidden)document.body.classList.remove("lock")};
+  if(RM)return done();lockEl.animate([{opacity:1},{opacity:0,transform:"scale(1.03)"}],{duration:220,easing:"ease-in"}).onfinish=done}
+function lkShake(msg){const d=$("#lkd");if(d){d.classList.remove("shake");void d.offsetWidth;d.classList.add("shake")}hap("warn");const m=$("#lkMsg");if(m)m.textContent=msg}
+async function pinDone(){const pin=lkBuf;
+  if(lkMode==="set"){lkFirst=pin;lkMode="confirm";lkBuf="";drawLock();return}
+  if(lkMode==="confirm"){if(pin!==lkFirst){lkMode="set";lkBuf="";drawLock();lkShake("الرمزين مو نفس الشي، عيد");return}
+    const salt=hex(crypto.getRandomValues(new Uint8Array(16)));LK={salt,hash:await pinHash(pin,salt),fails:0,until:0};LS.set("mzLock",LK);locked=false;hideLock();hap("ok");toast("تفعّل قفل التطبيق");const n=lkNext;lkNext=null;if(n)n();else render(false);return}
+  if(LK.until>Date.now()){lkBuf="";drawLock();return}
+  const ok=(await pinHash(pin,LK.salt))===LK.hash;
+  if(ok){LK.fails=0;LK.until=0;LS.set("mzLock",LK);hap("ok");
+    if(lkMode==="old"){const n=lkNext;lkNext=null;hideLock();n&&n();return}
+    locked=false;hideLock();bnAuto();return}
+  LK.fails=(LK.fails||0)+1;lkBuf="";
+  if(LK.fails>=10){await bnWipe();LK.fails=0;LS.set("mzLock",LK);drawLock();lkShake("10 محاولات غلط: انمسح ربط بينانس للأمان");return}
+  if(LK.fails%5===0)LK.until=Date.now()+30000*(LK.fails/5);
+  LS.set("mzLock",LK);drawLock();lkShake(LK.until>Date.now()?"انتظر شوية":"الرمز غلط · باقي "+(10-LK.fails)+" محاولات")}
+lockEl.addEventListener("click",e=>{const b=e.target.closest("[data-pin]");if(!b)return;const k=b.dataset.pin;
+  if(k==="x"){lkNext=null;hideLock();return}
+  if(LK&&LK.until>Date.now()&&lkMode!=="set"&&lkMode!=="confirm")return;
+  if(k==="⌫"){lkBuf=lkBuf.slice(0,-1);hap()}else if(lkBuf.length<4){lkBuf+=k;hap()}
+  document.querySelectorAll("#lkd i").forEach((el,i)=>el.classList.toggle("on",i<lkBuf.length));
+  if(lkBuf.length===4)setTimeout(pinDone,120)});
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="hidden"){hiddenAt=Date.now();document.body.classList.add("veil")}
+  else{document.body.classList.remove("veil");if(LK&&LK.hash&&Date.now()-hiddenAt>30000&&lockEl.hidden){locked=true;showLock("unlock")}else if(!locked)bnAuto()}});
+
+/* ---- Binance ---- */
+const BN="https://api.binance.com",STABLE=new Set(["USDT","USDC","FDUSD","BUSD","TUSD","DAI","USDP","USD1","USDE","XUSD","U"]);
+const BN_OK=IS_APK||IS_NATIVE();          // signed calls only from the Android build (no CORS there)
+let bnCred=null,bnBusy=false,bnErr="",bnOff=0,bnLast=0,bnForm={k:"",s:""},bnShow=false;
+let BNS=LS.get("mzBnSnap");               // last snapshot, holdings only (no keys)
+let BNCAP=LS.get("mzBnCap");             // what the user says they put in, USD
+const bnLinked=()=>!!LS.get("mzBn");
+async function bnGet(){if(bnCred)return bnCred;const b=LS.get("mzBn");if(!b)return null;try{bnCred=await unseal(b);return bnCred}catch(e){return null}}
+async function bnWipe(){LS.set("mzBn",null);LS.set("mzBnSnap",null);bnCred=null;BNS=null;bnErr=""}
+async function hj(url,opt={}){const r=await fetch(url,{method:opt.method||"GET",headers:opt.headers||{},cache:"no-store"});let d=null;try{d=await r.json()}catch(e){}
+  if(!r.ok){const e=new Error(d&&d.msg?d.msg:"HTTP "+r.status);e.code=d&&d.code;e.status=r.status;throw e}return d}
+async function sig(secret,msg){const k=await crypto.subtle.importKey("raw",TE.encode(secret),{name:"HMAC",hash:"SHA-256"},false,["sign"]);return hex(await crypto.subtle.sign("HMAC",k,TE.encode(msg)))}
+async function sget(cred,path,params={},method="GET"){const q=new URLSearchParams({...params,recvWindow:"15000",timestamp:String(Date.now()+bnOff)}).toString();
+  return hj(`${BN}${path}?${q}&signature=${await sig(cred.s,q)}`,{method,headers:{"X-MBX-APIKEY":cred.k}})}
+async function bnTime(){try{const t=await hj(BN+"/api/v3/time");bnOff=t.serverTime-Date.now()}catch(e){}}
+function bnErrText(e){const m=String(e&&e.message||e);
+  if(e&&(e.code===-2015||e.code===-2014||e.code===-1022))return "المفتاح أو الرمز السري غلط، أو مو مفعّل عليه القراءة";
+  if(e&&e.code===-1021)return "وقت الموبايل مو مضبوط";if(/Failed to fetch|NetworkError|network/i.test(m))return "ماكو اتصال بالإنترنت";return m.slice(0,120)}
+/* refuses any key that can trade or move money */
+async function bnCheck(cred){const r=await sget(cred,"/sapi/v1/account/apiRestrictions");
+  const bad=["enableSpotAndMarginTrading","enableWithdrawals","enableInternalTransfer","permitsUniversalTransfer","enableMargin","enableFutures","enableVanillaOptions","enablePortfolioMarginTrading","enableFixApiTrade"].filter(k=>r[k]===true);
+  return{read:r.enableReading!==false,bad,ip:!!r.ipRestrict}}
+function planMatch(a){const A=a.replace(/^EQ_/,"");return S.set.assets.find(x=>x.s&&(A===x.s.toUpperCase()||(x.s.length>=3&&A.startsWith(x.s.toUpperCase()))))}
+async function bnSync(force){if(bnBusy||locked)return;if(!force&&Date.now()-bnLast<60000)return;const cred=await bnGet();if(!cred)return;
+  bnBusy=true;bnErr="";if(tab==="inv"||tab==="set")render(false);
+  try{await bnTime();const chk=await bnCheck(cred);
+    if(chk.bad.length){bnErr="هالمفتاح يكدر يتداول أو يسحب. امسحه من بينانس وسوّي واحد قراءة فقط";throw 0}
+    const[sp,fu,fl,lo,wa,tk]=await Promise.allSettled([
+      sget(cred,"/api/v3/account",{omitZeroBalances:"true"}),
+      sget(cred,"/sapi/v1/asset/get-funding-asset",{needBtcValuation:"false"},"POST"),
+      sget(cred,"/sapi/v1/simple-earn/flexible/position",{size:"100"}),
+      sget(cred,"/sapi/v1/simple-earn/locked/position",{size:"100"}),
+      sget(cred,"/sapi/v1/asset/wallet/balance",{quoteAsset:"USDT"}),
+      hj(BN+"/api/v3/ticker/24hr?type=MINI")]);
+    if(sp.status==="rejected"&&fu.status==="rejected")throw sp.reason;
+    const H={},add=(a,q,w)=>{q=+q||0;if(!a||q<=0)return;const h=H[a]||(H[a]={a,q:0,w:new Set()});h.q+=q;h.w.add(w)};
+    const earnOK=fl.status==="fulfilled"||lo.status==="fulfilled";
+    if(sp.status==="fulfilled")(sp.value.balances||[]).forEach(b=>{let a=b.asset;if(/^LD/.test(a)&&a.length>3){if(earnOK)return;a=a.slice(2)}add(a,+b.free+ +b.locked,"Spot")});
+    if(fu.status==="fulfilled")(fu.value||[]).forEach(b=>add(b.asset,+b.free+ +b.locked+ +(b.freeze||0)+ +(b.withdrawing||0),"Funding"));
+    if(fl.status==="fulfilled")((fl.value&&fl.value.rows)||[]).forEach(b=>add(b.asset,b.totalAmount,"Earn"));
+    if(lo.status==="fulfilled")((lo.value&&lo.value.rows)||[]).forEach(b=>add(b.asset,b.amount,"Earn"));
+    const P={};if(tk.status==="fulfilled")tk.value.forEach(t=>P[t.symbol]=t);
+    const px=a=>{const A=a.replace(/^EQ_/,"");if(STABLE.has(A))return{p:1,c:0};
+      for(const q of["USDT","USDC","FDUSD"]){const t=P[A+q];if(t&&+t.lastPrice)return{p:+t.lastPrice,c:+t.openPrice?(+t.lastPrice/+t.openPrice-1):0}}
+      const t=P[A+"BTC"],b=P.BTCUSDT;if(t&&b)return{p:+t.lastPrice*+b.lastPrice,c:+t.openPrice?(+t.lastPrice/+t.openPrice-1):0};return null};
+    const list=Object.values(H).map(h=>{const r=px(h.a),pl=planMatch(h.a);return{a:h.a,n:h.a.replace(/^EQ_/,""),q:h.q,p:r?r.p:null,v:r?r.p*h.q:null,c:r?r.c:0,w:[...h.w].join(" · "),plan:pl?pl.n:"",ps:pl?pl.s:"",st:STABLE.has(h.a)}})
+      .filter(x=>x.v===null||x.v>=.01).sort((x,y)=>(!!y.plan-!!x.plan)||((y.v||0)-(x.v||0)));
+    const sum=list.reduce((s,x)=>s+(x.v||0),0),day=list.reduce((s,x)=>s+(x.v&&x.c?x.v-x.v/(1+x.c):0),0);
+    let wal=null;if(wa.status==="fulfilled"&&Array.isArray(wa.value)){wal=wa.value.filter(w=>+w.balance>0).map(w=>({n:w.walletName,v:+w.balance}))}
+    const wsum=wal?wal.reduce((s,w)=>s+w.v,0):0,total=Math.max(sum,wsum);
+    const hist=((BNS&&BNS.hist)||[]).filter(h=>Date.now()-h.t<90*864e5);hist.push({t:Date.now(),v:total});if(hist.length>120)hist.splice(0,hist.length-120);
+    BNS={t:Date.now(),total,sum,day,list,wal,hist,ip:chk.ip};LS.set("mzBnSnap",BNS);bnLast=Date.now();bnPortNotif();
+  }catch(e){if(e!==0)bnErr=bnErrText(e)}
+  bnBusy=false;if(tab==="inv"||tab==="set")render(false)}
+function bnAuto(){if(BN_OK&&bnLinked()&&!locked)bnSync(false)}
+const capOf=()=>BNCAP!=null?+BNCAP:Object.keys(S.months).filter(k=>S.months[k]&&S.months[k].inv).reduce((a,k)=>a+S.months[k].inv.iqd/S.months[k].inv.rate,0);
+const sgn=n=>(n>=0?"+":"−")+"$"+Math.abs(n).toFixed(2);
+const ago=t=>{const m=Math.round((Date.now()-t)/60000);return m<1?"هسه":m<60?"قبل "+m+" دقيقة":m<1440?"قبل "+Math.round(m/60)+" ساعة":"قبل "+Math.round(m/1440)+" يوم"};
+/* one private notification each morning with the latest known total (content hidden on the lock screen) */
+async function bnPortNotif(){const ln=LN();if(!ln||!BNS)return;try{
+  try{await ln.createChannel({id:"mahfazti-inv",name:"قيمة المحفظة",description:"ملخص استثماراتك",importance:4,visibility:0})}catch(e){}
+  const cap=capOf(),pl=BNS.total-cap,now=new Date(),at=new Date(now.getFullYear(),now.getMonth(),now.getDate()+(now.getHours()>=10?1:0),10,0);
+  await ln.cancel({notifications:[{id:400}]}).catch(()=>{});
+  await ln.schedule({notifications:[{id:400,title:"محفظتك: $"+BNS.total.toFixed(2),body:(cap>0?(pl>=0?"ربحك ":"خسارتك ")+sgn(pl)+" ("+(pl/cap*100).toFixed(1)+"%)":"")+" · آخر تحديث "+new Date(BNS.t).toLocaleTimeString("ar-IQ",{hour:"numeric",minute:"2-digit"})+". افتح التطبيق للتحديث",channelId:"mahfazti-inv",schedule:{at,allowWhileIdle:true}}]})}catch(e){}}
+
+/* ---- views ---- */
+function bnCard(){
+  if(!BN_OK&&!BNS)return "";
+  if(!bnLinked())return BN_OK?`<button class="card bnl press" data-act="bnGo"><span class="sic" style="--c:#f0b90b">${svg(SI.chart)}</span><span class="sl">اربط حساب بينانس<small>حتى تشوف قيمة محفظتك وربحك الحالي</small></span><span class="chev">‹</span></button>`:"";
+  if(!BNS)return `<div class="card bnc"><small>محفظتك ببينانس</small><div class="big" style="margin:6px 0">${bnBusy?"دا يجيب البيانات…":"—"}</div>${bnErr?`<p class="bne">${esc(bnErr)}</p>`:""}<button class="pill press" data-act="bnSync">حدّث</button></div>`;
+  const cap=capOf(),pl=BNS.total-cap,pp=cap>0?pl/cap*100:0,dc=BNS.day,up=pl>=0;
+  return `<div class="card bnc"><div class="bnh"><small>محفظتك ببينانس</small><button class="bnr press${bnBusy?" spin":""}" data-act="bnSync" aria-label="تحديث">${svg(SI.repeat)}</button></div>
+    <div class="big" style="font-size:40px;margin:2px 0 2px">${N("bnt",BNS.total,"u")}</div>
+    <span class="num" style="opacity:.75;font-size:14px">≈ ${f(BNS.total*S.set.rate)} د.ع</span>
+    <div class="bng"><div><small>${up?"الربح":"الخسارة"} الكلي</small>${cap>0?`<b class="num ${up?"up":"dn"}">${sgn(pl)} · ${(up?"+":"")+pp.toFixed(1)}%</b>`:`<b style="font-size:14px;font-weight:500;opacity:.8">حدد شكد حطيت بالإعدادات</b>`}</div><div><small>اليوم</small><b class="num ${dc>=0?"up":"dn"}">${sgn(dc)}</b></div></div>
+    <small class="bnu">${bnErr?esc(bnErr):bnBusy?"دا يحدّث…":"آخر تحديث "+ago(BNS.t)}</small></div>`}
+function bnList(){if(!BNS||!BNS.list.length)return "";const L=BNS.list,hasPlan=L.some(x=>x.plan);
+  const row=(x,i)=>`<div class="row"><span class="sym" style="background:${x.plan?symCol(x.ps,i):x.st?"#26a17b":SYMC[(i+3)%SYMC.length]}">${esc((x.ps||x.n).slice(0,4))}</span><div class="grow"><div>${esc(x.plan||x.n)}</div><div class="s"><span class="num">${+x.q.toPrecision(6)}</span> ${esc(x.n)} · ${esc(x.w)}</div></div><div style="text-align:left"><b class="num">${x.v!=null?usd(x.v):"—"}</b><div class="s num ${x.c>0?"up":x.c<0?"dn":""}">${x.v!=null&&!x.st?(x.c>=0?"+":"")+(x.c*100).toFixed(2)+"%":x.v==null?"بدون سعر":""}</div></div></div>`;
+  return `<div class="sec"><span>كل اللي عندك ببينانس</span><span>${L.length} أصل</span></div>
+  <div class="card list" style="padding:4px 0">${L.map(row).join("")}${BNS.wal&&BNS.total-BNS.sum>1?`<div class="row"><span class="sym" style="background:#8e8e93">…</span><div class="grow"><div>أرصدة ثانية</div><div class="s">${esc(BNS.wal.map(w=>w.n).join("، "))}</div></div><b class="num">${usd(BNS.total-BNS.sum)}</b></div>`:""}</div>
+  ${hasPlan?`<div class="foot">اللي بأولها اسم واضح هي من خطتك.</div>`:""}`}
+function secSection(){const on=!!(LK&&LK.hash);
+  return `<div class="sec"><span>الحماية</span></div><div class="card grp">
+  <div class="sr"><span class="sic" style="--c:${on?"#34c759":"#8e8e93"}">${svg(SI.lock)}</span><span class="sl">قفل التطبيق<small>${on?"مفعّل · يقفل إذا طلعت أكثر من 30 ثانية":"بدون قفل"}</small></span>${on?`<button class="pill press" data-act="pinChange" style="width:auto;margin:0;padding:0 12px">غيّر</button><button class="pill press" data-act="pinOff" style="width:auto;margin:0 6px 0 0;padding:0 12px;color:var(--red)">شيله</button>`:`<button class="pill g press" data-act="pinSet" style="width:auto;margin:0;padding:0 14px">فعّل</button>`}</div></div>`}
+function bnSection(){
+  if(!BN_OK)return `<div class="sec"><span>بينانس</span></div><div class="card"><p style="margin:0;font-size:15px;color:var(--ink2)">ربط بينانس يشتغل بتطبيق الأندرويد بس.</p></div>`;
+  if(bnLinked()){const cap=capOf();return `<div class="sec" id="bnSec"><span>بينانس</span></div><div class="card grp">
+    <div class="sr"><span class="sic" style="--c:#f0b90b">${svg(SI.chart)}</span><span class="sl">مربوط · قراءة فقط<small>${BNS?"آخر تحديث "+ago(BNS.t):"ما تحدّث بعد"}${BNS&&!BNS.ip?" · المفتاح مو مقفول على IP":""}</small></span><button class="pill g press" data-act="bnSync" style="width:auto;margin:0;padding:0 14px">حدّث</button></div>
+    <label class="sr"><span class="sic" style="--c:#5e5ce6">${svg(SI.money)}</span><span class="sl">شكد حطيت بالكلي<small>حتى نحسب ربحك. ${BNCAP!=null?"انت كتبته":"محسوب من الأشهر المسجلة"}</small></span><span class="sv" style="width:36%"><input data-bncap inputmode="decimal" value="${cap?cap.toFixed(2):""}" placeholder="0"><em>$</em></span></label>
+    <button class="sr press soft" data-act="bnUnlink"><span class="sic" style="--c:#ff3b30">${svg(SI.trash)}</span><span class="sl" style="color:var(--red)">احذف الربط</span></button></div>
+    ${bnErr?`<div class="foot" style="color:var(--red)">${esc(bnErr)}</div>`:""}`}
+  return `<div class="sec" id="bnSec"><span>اربط بينانس</span><span>قراءة فقط</span></div><div class="card">
+    <ol class="bns"><li>ببينانس: الملف الشخصي ← <b>إدارة API</b> ← إنشاء API، وسمّيه "محفظتي"</li><li>خلي <b>Enable Reading</b> بس. لا تفعّل التداول ولا السحب</li><li>انسخ <b>API Key</b> و<b>Secret Key</b> والصقهن هنا</li></ol>
+    <label><span class="fl">API Key</span><input class="box" id="bnK" autocomplete="off" autocapitalize="off" spellcheck="false" value="${esc(bnForm.k)}"></label>
+    <label><span class="fl">Secret Key</span><input class="box" id="bnS" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" value="${esc(bnForm.s)}"></label>
+    ${bnErr?`<p class="bne" style="color:var(--red)">${esc(bnErr)}</p>`:""}
+    <button class="cta press" data-act="bnLink" style="margin-top:12px"${bnBusy?" disabled":""}>${bnBusy?"دا يتأكد…":"اربط"}</button></div>
+  <div class="foot">المفتاح ينحفظ مشفّر بموبايلك بس، وما يطلع لأي مكان غير بينانس. وإذا كان المفتاح يكدر يتداول أو يسحب، التطبيق يرفضه.</div>`}
+async function bnLinkNow(){const k=($("#bnK").value||"").trim(),s=($("#bnS").value||"").trim();bnForm={k,s};
+  if(!/^[A-Za-z0-9]{20,128}$/.test(k)||!/^[A-Za-z0-9]{20,128}$/.test(s)){bnErr="الصق المفتاح والرمز السري كاملين";hap("warn");render(false);return}
+  if(!HAS_CRYPTO){bnErr="الموبايل ما يدعم التشفير";render(false);return}
+  if(!(LK&&LK.hash)){showLock("set",()=>bnLinkNow());return}
+  bnBusy=true;bnErr="";render(false);
+  try{await bnTime();const chk=await bnCheck({k,s});
+    if(!chk.read)throw new Error("فعّل Enable Reading على المفتاح");
+    if(chk.bad.length){bnBusy=false;bnErr="رفضت المفتاح: مفعّل عليه تداول أو سحب. امسحه من بينانس وسوّي واحد جديد قراءة فقط";hap("warn");render(false);return}
+    LS.set("mzBn",await seal({k,s}));bnCred={k,s};bnForm={k:"",s:""};bnBusy=false;hap("ok");toast("انربط بينانس");tab="inv";render(true);bnSync(true);
+  }catch(e){bnBusy=false;bnErr=bnErrText(e);hap("warn");render(false)}}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-act]");if(!t)return;const a=t.dataset.act;
+  if(a==="bnGo"){hap();go("set");setTimeout(()=>{const s=$("#bnSec");s&&s.scrollIntoView({behavior:RM?"auto":"smooth"})},350)}
+  else if(a==="bnSync"){hap();bnSync(true)}
+  else if(a==="bnLink")bnLinkNow();
+  else if(a==="bnUnlink"){const doit=async()=>{await bnWipe();const ln=LN();ln&&ln.cancel({notifications:[{id:400}]}).catch(()=>{});render(false);hap("warn");toast("انحذف الربط. امسح المفتاح من بينانس هم","o")};LK&&LK.hash?showLock("old",doit):doit()}
+  else if(a==="pinSet"){hap();showLock("set")}
+  else if(a==="pinChange"){hap();showLock("old",()=>showLock("set"))}
+  else if(a==="pinOff"){hap();showLock("old",()=>{if(bnLinked()){toast("لازم تحذف ربط بينانس أول حتى تشيل القفل","o");return}LK=null;LS.set("mzLock",null);render(false);toast("انشال القفل")})}});
+document.addEventListener("input",e=>{const t=e.target;if(t.id==="bnK")bnForm.k=t.value;else if(t.id==="bnS")bnForm.s=t.value;
+  else if(t.dataset&&t.dataset.bncap!==undefined){const v=parseFloat(digits(t.value).replace(/[^\d.]/g,""));BNCAP=isNaN(v)?null:v;LS.set("mzBnCap",BNCAP)}});
+document.addEventListener("focusout",e=>{if(e.target.dataset&&e.target.dataset.bncap!==undefined)bnPortNotif()});
+
 /* ---------- events ---------- */
 $("#fab").addEventListener("click",openSheet);
 document.addEventListener("click",e=>{
@@ -889,6 +1094,7 @@ document.addEventListener("input",e=>{const t=e.target,s=S.set;
 document.addEventListener("focusout",e=>{const t=e.target;if(t.classList&&t.classList.contains("fmt")&&!t.dataset.split&&t.dataset.asset===undefined&&t.dataset.set!=="payday"&&t.dataset.loan!=="spread"){const v=num(t.value);t.value=v?f(v):""}});
 setSheet(2000);
 render(true);scheduleNative();initDb();initDesktop();
+if(locked)showLock("unlock");else bnAuto();
 if(!S.set.onboarded)openOnb();
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&LN())scheduleNative()});
 if(IS_WEBAPP&&"serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});

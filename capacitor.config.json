@@ -3,6 +3,15 @@
   "appName": "محفظتي",
   "webDir": "www",
   "plugins": {
-    "LocalNotifications": { "iconColor": "#1463FF" }
+    "LocalNotifications": {
+      "iconColor": "#1463FF"
+    },
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  },
+  "android": {
+    "webContentsDebuggingEnabled": false,
+    "allowMixedContent": false
   }
 }

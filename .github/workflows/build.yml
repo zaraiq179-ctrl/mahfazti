@@ -61,6 +61,11 @@ jobs:
             grep -q "android.permission.$perm\"" $M || sed -i "s#</manifest>#    <uses-permission android:name=\"android.permission.$perm\" />\n</manifest>#" $M
           done
           cat $M | grep uses-permission
+      - name: Harden the app (no cloud backup of stored keys, HTTPS only)
+        run: |
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i 's#android:allowBackup="true"#android:allowBackup="false" android:usesCleartextTraffic="false"#' $M
+          grep -o 'android:allowBackup="false"' $M
       - run: npx @capacitor/assets generate --android --iconBackgroundColor '#1463FF' --iconBackgroundColorDark '#1463FF'
       - run: npx cap sync android
       - name: Use a fixed signing key so updates install over the old app
