@@ -76,6 +76,17 @@
     if (!c || !c.text || !c.text[lang]) return t;
     var o = {}; for (var k in t) o[k] = t[k];
     var x = c.text[lang]; for (var k2 in x) if (x[k2] && String(x[k2]).trim()) o[k2] = x[k2];
+    // the consultation price set in the panel flows into every other sentence that quotes it
+    var P = x.cPrice && String(x.cPrice).trim();
+    if (P) {
+      var OLD = { ar: [/من\s*40\s*(?:إلى|الى|-|–)\s*50\s*دولار/g], en: [/from \$40 to \$50/g, /\$40\s*[–-]\s*\$50/g, /\$40 to \$50/g], ru: [/от 40 до 50 \$/g, /40\s*[–-]\s*50 \$/g], tm: [/40\s*[–-]\s*50 \$/g] }[lang] || [];
+      for (var k3 in o) {
+        if (k3 === 'cPrice' || (x[k3] && String(x[k3]).trim()) || typeof o[k3] !== 'string') continue;
+        var v = o[k3]; for (var i = 0; i < OLD.length; i++) v = v.replace(OLD[i], P);
+        o[k3] = v;
+      }
+      if (!(x.priceVal && String(x.priceVal).trim())) o.priceVal = P;
+    }
     return o;
   };
 })();
