@@ -119,6 +119,22 @@ main{max-width:1180px;margin:0 auto;padding:22px 18px 120px}
 .tx-grid{display:flex;flex-direction:column;gap:14px}
 .empty{padding:40px 20px;text-align:center;color:var(--muted)}
 @media (max-width:640px){#viewSite{display:none !important}.dr{flex-wrap:wrap}.dr .tx{flex:1 1 calc(100% - 80px)}.dr .acts{width:100%;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--line)}.dr .acts .ib{width:44px !important;height:38px !important}.sec-h h2{font-size:22px}.top-t small{display:none}.gg{grid-template-columns:repeat(3,1fr);gap:8px}.gi,.add{border-radius:14px}.ib{width:32px;height:32px;border-radius:10px}.dr .acts .ib{width:34px;height:34px}.ed .row{grid-template-columns:1fr}}
+/* hospitals + stories */
+.hr{display:flex;align-items:center;gap:14px;padding:12px;border-radius:20px;background:#fff;border:1px solid var(--line);animation:up .5s var(--ease) both}
+.hr.off{opacity:.5}
+.hr .hp{width:96px;height:64px;border-radius:14px;flex:none;overflow:hidden;background:linear-gradient(165deg,#10293B,#0A1B28);color:#fff;display:grid;place-items:center;font:800 17px 'IBM Plex Sans';letter-spacing:-.02em}
+.hr .hp img{width:100%;height:100%;object-fit:cover;display:block}
+.hr .ht{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.hr .ht b{font-size:15.5px}.hr .ht small{color:var(--muted);font-size:13px}
+.hr .ha{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.hr .ib{background:var(--mint);box-shadow:none}
+.sc{padding:16px;border-radius:20px;background:#fff;border:1px solid var(--line);display:flex;flex-direction:column;gap:10px;animation:up .5s var(--ease) both}
+.sc.off{opacity:.55}
+.sc .sr{display:flex;gap:12px;align-items:flex-start}
+.sc .av{width:64px;height:64px;border-radius:50%;flex:none;background:var(--mint);overflow:hidden;display:grid;place-items:center;color:var(--teal);font-size:12px;font-weight:800;cursor:pointer;text-align:center;line-height:1.3}
+.sc .av img{width:100%;height:100%;object-fit:cover}
+.sc textarea{min-height:96px}
+.sc .ha{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.sc .ib{background:var(--mint);box-shadow:none}
 </style>
 </head>
 <body>
@@ -170,6 +186,8 @@ main{max-width:1180px;margin:0 auto;padding:22px 18px 120px}
   <nav class="tabs" id="tabs">
    <button class="tab on" data-t="docs">الأطباء</button>
    <button class="tab" data-t="gal">صور المرضى</button>
+   <button class="tab" data-t="hos">المستشفيات</button>
+   <button class="tab" data-t="sto">قصص المرضى</button>
    <button class="tab" data-t="txt">النصوص والأسعار</button>
    <button class="tab" data-t="set">الإعدادات</button>
   </nav>
@@ -183,6 +201,16 @@ main{max-width:1180px;margin:0 auto;padding:22px 18px 120px}
    <div class="sec-h"><div><h2>صور المرضى</h2><p>تظهر بقسم «لحظات من رحلات مرضانا». رتّبها بالأسهم، والصور الجديدة تتصغر تلقائياً.</p></div></div>
    <div class="gg" id="galGrid"></div>
    <input type="file" id="galFile" accept="image/*" multiple class="hide">
+  </section>
+  <section data-p="hos" class="hide">
+   <div class="sec-h"><div><h2>المستشفيات</h2><p>غيّر صورة كل مستشفى (صورة أفقية للمبنى أو الاستقبال)، رتّبها، أو أخفِ مستشفى.</p></div></div>
+   <div class="dl" id="hosList"></div>
+   <input type="file" id="hosFile" accept="image/*" class="hide">
+  </section>
+  <section data-p="sto" class="hide">
+   <div class="sec-h"><div><h2>قصص المرضى</h2><p>اكتب كلام المريض مثل ما قاله، وبعد موافقته على النشر. القسم يظهر بالموقع من تضيف أول قصة.</p></div><button class="btn b-teal" id="addSto">+ قصة جديدة</button></div>
+   <div class="dl" id="stoList"></div>
+   <input type="file" id="stoFile" accept="image/*" class="hide">
   </section>
   <section data-p="txt" class="hide">
    <div class="sec-h"><div><h2>النصوص والأسعار</h2><p>عنوان الصفحة الرئيسية وسعر الاستشارة، بالأربع لغات.</p></div></div>
@@ -304,8 +332,8 @@ $('#goSetup').onclick = async () => {
 async function boot() {
   busy(true, 'جاري التحميل…');
   try {
-    const [d, g, t] = await Promise.all(['doctors-base.json', 'gallery-base.json', 'texts-base.json'].map(f => fetch(f + '?t=' + Date.now()).then(r => r.ok ? r.json() : null).catch(() => null)));
-    BASE = { docs: d || [], gal: g || [], txt: t || {} };
+    const [d, g, t, hb] = await Promise.all(['doctors-base.json', 'gallery-base.json', 'texts-base.json', 'hospitals-base.json'].map(f => fetch(f + '?t=' + Date.now()).then(r => r.ok ? r.json() : null).catch(() => null)));
+    BASE = { docs: d || [], gal: g || [], txt: t || {}, hos: hb || [] };
     C = (await readJSON('content.json')) || { version: 1 };
     C.doctors = C.doctors || { order: [], items: {} }; C.doctors.items = C.doctors.items || {}; C.doctors.order = C.doctors.order || [];
     if (!C.gallery || !C.gallery.length) C.gallery = BASE.gal.slice();
@@ -451,6 +479,55 @@ $('#galFile').onchange = async (e) => {
   catch (err) { toast('تعذر تجهيز صورة: ' + err.message, 4000); } finally { busy(false); }
 };
 
+
+/* ---------- hospitals ---------- */
+let HOS_K = null;
+function hosList() { const b = BASE.hos || [], o = C.hosps || {}, ord = C.hospOrder || []; const out = b.map(h => { const n = Object.assign({}, h, o[h.key] || {}); if (n.img === 'none') n.img = ''; return n; }); out.sort((a, c) => { const i = ord.indexOf(a.key), j = ord.indexOf(c.key); return (i < 0 ? 99 : i) - (j < 0 ? 99 : j); }); return out; }
+function renderHos() {
+  const L0 = hosList();
+  $('#hosList').innerHTML = L0.map((h, i) => `<div class="hr ${h.hidden ? 'off' : ''}" data-k="${esc(h.key)}" style="animation-delay:${i * 30}ms"><span class="hp">${h.img ? `<img src="${esc(imgSrc(h.img))}" alt="">` : esc(h.word)}</span>
+    <span class="ht"><b>${esc(L(h.name, 'ar'))}</b><small>${esc(L(h.city, 'ar'))}${h.img ? ' · فيها صورة' : ' · بدون صورة (تصميم)'}${h.hidden ? ' · مخفي' : ''}</small></span>
+    <span class="ha"><button class="ib" data-a="ph" title="تغيير الصورة">📷</button>${h.img ? '<button class="ib del" data-a="noph" title="حذف الصورة">✕</button>' : ''}<button class="ib" data-a="hide" title="إخفاء / إظهار">${h.hidden ? '👁' : '🚫'}</button><button class="ib" data-a="up" title="قبل">↑</button><button class="ib" data-a="down" title="بعد">↓</button></span></div>`).join('');
+}
+function hosSet(k, patch) { C.hosps = C.hosps || {}; const o = C.hosps[k] = Object.assign({}, C.hosps[k] || {}, patch); Object.keys(o).forEach(x => { if (o[x] === undefined) delete o[x]; }); if (!Object.keys(o).length) delete C.hosps[k]; setDirty(); renderHos(); }
+$('#hosList').onclick = (e) => {
+  const b = e.target.closest('[data-a]'); if (!b) return; const k = b.closest('.hr').dataset.k, a = b.dataset.a, cur = hosList().find(h => h.key === k), base = (BASE.hos || []).find(h => h.key === k) || {};
+  if (a === 'ph') { HOS_K = k; $('#hosFile').click(); return; }
+  if (a === 'noph') { if (!confirm('حذف صورة المستشفى؟ راح يرجع للتصميم بدون صورة.')) return; hosSet(k, { img: base.img ? 'none' : undefined, credit: base.img ? '' : undefined }); return; }
+  if (a === 'hide') { hosSet(k, { hidden: cur.hidden ? undefined : true }); return; }
+  const ord = hosList().map(h => h.key), i = ord.indexOf(k);
+  if (a === 'up' && i > 0) [ord[i - 1], ord[i]] = [ord[i], ord[i - 1]];
+  if (a === 'down' && i < ord.length - 1) [ord[i + 1], ord[i]] = [ord[i], ord[i + 1]];
+  C.hospOrder = ord; setDirty(); renderHos();
+};
+$('#hosFile').onchange = async (e) => { const f = e.target.files[0]; e.target.value = ''; if (!f || !HOS_K) return; busy(true, 'جاري تجهيز الصورة…'); try { const p = await stage(f, 1400, 1000, 0.84); hosSet(HOS_K, { img: p, credit: '' }); toast('انضافت الصورة — اضغط «نشر التغييرات»'); } catch (err) { toast('تعذر: ' + err.message, 4000); } finally { busy(false); } };
+
+/* ---------- patient stories ---------- */
+let STO_I = -1;
+function renderSto() {
+  const S = C.stories = C.stories || [];
+  $('#stoList').innerHTML = S.length ? S.map((x, i) => `<div class="sc ${x.hidden ? 'off' : ''}" data-i="${i}" style="animation-delay:${i * 30}ms">
+    <div class="sr"><span class="av" data-a="ph">${x.img ? `<img src="${esc(imgSrc(x.img))}" alt="">` : 'صورة<br>(اختياري)'}</span>
+     <div class="fld" style="flex:1;margin:0"><label>كلام المريض (مثل ما قاله)</label><textarea data-f="q" dir="rtl">${esc(x.q || '')}</textarea></div></div>
+    <div class="row"><div class="fld"><label>الاسم (أو الحرف الأول)</label><input data-f="name" value="${esc(x.name || '')}"></div><div class="fld"><label>المدينة</label><input data-f="city" value="${esc(x.city || '')}"></div></div>
+    <div class="fld"><label>العلاج</label><input data-f="treat" value="${esc(x.treat || '')}" placeholder="مثلاً: عملية قلب مفتوح"></div>
+    <div class="ha">${x.img ? '<button class="ib del" data-a="noph" title="حذف الصورة">✕</button>' : ''}<button class="ib" data-a="hide" title="إخفاء / إظهار">${x.hidden ? '👁' : '🚫'}</button><button class="ib" data-a="up" title="قبل">↑</button><button class="ib" data-a="down" title="بعد">↓</button><button class="ib del" data-a="del" title="حذف">🗑</button></div></div>`).join('')
+    : '<div class="card" style="padding:22px;color:var(--muted);line-height:1.8">ماكو قصص بعد، والقسم مخفي بالموقع. اضغط «+ قصة جديدة» وانسخ كلام المريض من واتساب.</div>';
+}
+$('#addSto').onclick = () => { C.stories = C.stories || []; C.stories.unshift({ q: '', name: '', city: '', treat: '' }); setDirty(); renderSto(); const t = $('#stoList textarea'); t && t.focus(); };
+$('#stoList').addEventListener('input', (e) => { const f = e.target.closest('[data-f]'); if (!f) return; const i = +f.closest('.sc').dataset.i; C.stories[i][f.dataset.f] = f.value; setDirty(); });
+$('#stoList').onclick = (e) => {
+  const b = e.target.closest('[data-a]'); if (!b) return; const i = +b.closest('.sc').dataset.i, a = b.dataset.a, S = C.stories;
+  if (a === 'ph') { STO_I = i; $('#stoFile').click(); return; }
+  if (a === 'noph') delete S[i].img;
+  if (a === 'hide') { if (S[i].hidden) delete S[i].hidden; else S[i].hidden = true; }
+  if (a === 'del') { if (!confirm('حذف القصة؟')) return; S.splice(i, 1); }
+  if (a === 'up' && i > 0) [S[i - 1], S[i]] = [S[i], S[i - 1]];
+  if (a === 'down' && i < S.length - 1) [S[i + 1], S[i]] = [S[i], S[i + 1]];
+  setDirty(); renderSto();
+};
+$('#stoFile').onchange = async (e) => { const f = e.target.files[0]; e.target.value = ''; if (!f || STO_I < 0) return; try { const p = await stage(f, 320, 320, 0.85); C.stories[STO_I].img = p; setDirty(); renderSto(); } catch (err) { toast('تعذر: ' + err.message, 4000); } };
+
 /* ---------- texts ---------- */
 const TXT = [['h1a', 'العنوان الرئيسي — السطر الأول'], ['h1b', 'العنوان الرئيسي — السطر الثاني (الملوّن)'], ['lede', 'النص تحت العنوان'], ['cPrice', 'سعر الاستشارة'], ['cPriceNote', 'ملاحظة تحت السعر'], ['tr2', 'السعر بالشريط تحت الصفحة الرئيسية']];
 let TL = 'ar';
@@ -472,7 +549,7 @@ $('#pub').onclick = async () => {
   if (!dirty) { toast('ماكو تغييرات جديدة'); return; }
   busy(true, 'جاري النشر…');
   try {
-    const used = new Set([...C.gallery.map(g => g.src), ...Object.values(C.doctors.items).map(o => o && o.img).filter(Boolean)]);
+    const used = new Set([...C.gallery.map(g => g.src), ...Object.values(C.doctors.items).map(o => o && o.img).filter(Boolean), ...Object.values(C.hosps || {}).map(o => o && o.img).filter(Boolean), ...(C.stories || []).map(o => o && o.img).filter(Boolean)]);
     const files = [];
     for (const p of Object.keys(PEND)) if (used.has(p)) files.push({ path: p, content: await blobB64(PEND[p].blob) });
     C.updated = new Date().toISOString();
@@ -484,7 +561,7 @@ $('#pub').onclick = async () => {
   } catch (e) { busy(false); toast('فشل النشر: ' + e.message, 6000); }
 };
 
-function renderAll() { renderDocs(); renderGal(); renderTxt(); renderSet(); }
+function renderAll() { renderDocs(); renderGal(); renderHos(); renderSto(); renderTxt(); renderSet(); }
 
 /* resume an open session (same tab) */
 (async () => { const t = sessionStorage.getItem('bsa_t'); if (t) { TOKEN = t; await boot(); } })();

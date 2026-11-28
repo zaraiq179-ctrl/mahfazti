@@ -71,6 +71,13 @@
     return order.filter(function (k) { return map[k] && !(items[k] && items[k].hidden); }).map(function (k) { return map[k]; });
   };
   /* t: the built-in texts for one language. */
+  // partner hospitals: per-hospital overrides from the panel ({ key: { img, hidden, order } })
+  window.__bsHosps = function (base, c) {
+    c = c || window.__bsCMS; var o = c && c.hosps; if (!o) return base;
+    var out = base.map(function (h) { var x = o[h.key]; if (!x) return h; var n = {}; for (var k in h) n[k] = h[k]; for (var k2 in x) if (x[k2] !== '' && x[k2] != null) n[k2] = x[k2]; if (n.img === 'none') { n.img = ''; n.credit = ''; } return n; });
+    if (c.hospOrder && c.hospOrder.length) out.sort(function (a, b) { var i = c.hospOrder.indexOf(a.key), j = c.hospOrder.indexOf(b.key); return (i < 0 ? 99 : i) - (j < 0 ? 99 : j); });
+    return out;
+  };
   window.__bsText = function (t, lang, c) {
     c = c || window.__bsCMS;
     if (!c || !c.text || !c.text[lang]) return t;
@@ -327,7 +334,6 @@ html,body{overflow-x:clip}
   .bs #doctors .dgrid::-webkit-scrollbar,.bs .stagger::-webkit-scrollbar{display:none}
   .bs #doctors .dgrid > *,.bs #services .stagger > *,.bs #hospitals .stagger > *,.bs #stories .stagger > *,.bs #articles .stagger > *{
     flex:0 0 82%;scroll-snap-align:start;animation:none !important;opacity:1 !important;transform:none;filter:none !important}
-  .bs #hospitals .stagger > a[style*="min-height: 420px"]{min-height:0 !important}
   .bs #doctors [role="group"]{flex-wrap:nowrap !important;overflow-x:auto;margin:0 -18px 22px !important;padding:0 18px 4px;scrollbar-width:none}
   .bs #doctors [role="group"]::-webkit-scrollbar{display:none}
   .bs #doctors [role="group"] button{flex:none;height:40px !important;padding:0 16px !important}
@@ -557,17 +563,6 @@ html,body{overflow-x:clip}
   .bs .hero-img{animation:kenB 16s ease-in-out infinite alternate !important;transform-origin:50% 60%}
   @keyframes kenB{from{transform:scale(1.02)}to{transform:scale(1.12)}}
 
-  /* hospitals: full-photo cards like the doctors */
-  .bs #hospitals article{position:relative !important;aspect-ratio:4/5;border:0 !important;border-radius:26px !important;background:#0E2A3B !important;isolation:isolate;box-shadow:0 22px 44px -30px rgba(14,42,59,.6) !important}
-  .bs #hospitals article > div:first-child{position:absolute !important;inset:0;height:auto !important}
-  .bs #hospitals article > div:first-child::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,24,34,0) 30%,rgba(8,24,34,.45) 58%,rgba(8,24,34,.9) 100%)}
-  .bs #hospitals article > div:first-child img{animation:none}
-  .bs #hospitals article > div:first-child > span{top:14px !important;bottom:auto !important;z-index:2;background:rgba(255,255,255,.9) !important}
-  .bs #hospitals article > div:nth-child(2){position:absolute !important;inset-inline:0;bottom:0;z-index:2;padding:18px !important;gap:8px !important}
-  .bs #hospitals article h3{color:#FFFFFF !important;font-size:21px !important}
-  .bs #hospitals article p{color:rgba(255,255,255,.8) !important;font-size:13px !important}
-  .bs #hospitals article p span{color:#8FE8D4 !important}
-  .bs #hospitals article a{background:rgba(255,255,255,.16) !important;color:#FFFFFF !important;border:1px solid rgba(255,255,255,.28) !important;height:42px !important}
 
   /* "start your journey": living gradient + soft moving light */
   .bs #contact > .rise{isolation:isolate;border-radius:30px !important}
