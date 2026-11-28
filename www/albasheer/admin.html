@@ -147,7 +147,7 @@ main{max-width:1180px;margin:0 auto;padding:22px 18px 120px}
     <li>Permissions ← Contents ← <b>Read and write</b>.</li>
     <li>Generate token وانسخه هنا.</li>
    </ol></div>
-   <div class="fld"><label for="tk">رمز الوصول (Token)</label><input id="tk" type="password" autocomplete="off" placeholder="github_pat_…"></div>
+   <div class="fld"><label for="tk">رمز الوصول (Token)</label><input id="tk" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" dir="ltr" placeholder="github_pat_…" style="font-family:'IBM Plex Sans',monospace;font-size:13px"></div>
    <div class="fld"><label for="pw1">كلمة سر جديدة للوحة (8 أحرف أو أكثر)</label><input id="pw1" type="password" autocomplete="new-password"></div>
    <div class="fld"><label for="pw2">أعد كلمة السر</label><input id="pw2" type="password" autocomplete="new-password"></div>
    <button class="btn b-main" id="goSetup">ربط وحفظ</button>
@@ -284,6 +284,7 @@ $('#pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#goIn').
 $('#goSetup').onclick = async () => {
   const tk = $('#tk').value.trim(), p1 = $('#pw1').value, p2 = $('#pw2').value, err = $('#errSetup'); err.textContent = '';
   if (!tk) { err.textContent = 'الصق رمز الوصول'; return; }
+  if (!/^(github_pat_|ghp_)[A-Za-z0-9_]{30,}$/.test(tk)) { err.textContent = 'الرمز اللي لصقته ناقص أو مو رمز GitHub (' + tk.length + ' حرف). الرمز الصحيح يبدي بـ github_pat_ وطوله حوالي 90 حرف — انسخه من زر Copy token مرة ثانية.'; return; }
   if (p1.length < 8) { err.textContent = 'كلمة السر لازم 8 أحرف أو أكثر'; return; }
   if (p1 !== p2) { err.textContent = 'كلمتا السر مو متطابقتين'; return; }
   $('#goSetup').disabled = true;
@@ -296,7 +297,7 @@ $('#goSetup').onclick = async () => {
     await commit([{ path: 'admin-key.json', content: b64u(JSON.stringify(box)) }], 'Admin: connect control panel');
     toast('تم الربط ✓');
     await loginWith(tk);
-  } catch (e) { err.textContent = e.message; } finally { $('#goSetup').disabled = false; }
+  } catch (e) { err.textContent = /401/.test(e.message) ? 'GitHub رفض الرمز (401): الرمز غلط أو انتهى. انسخه من جديد بزر Copy token، أو سوّي رمز جديد.' : e.message; } finally { $('#goSetup').disabled = false; }
 };
 
 /* ---------- boot ---------- */
