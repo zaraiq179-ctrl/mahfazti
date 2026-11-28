@@ -1,0 +1,133 @@
+{
+ "version": 1,
+ "doctors": {
+  "order": [],
+  "items": {}
+ },
+ "gallery": [
+  {
+   "src": "img/pt/p01.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p02.webp",
+   "w": 1200,
+   "h": 900
+  },
+  {
+   "src": "img/pt/p03.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p04.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p05.webp",
+   "w": 1200,
+   "h": 900
+  },
+  {
+   "src": "img/pt/p06.webp",
+   "w": 1200,
+   "h": 900
+  },
+  {
+   "src": "img/pt/p07.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p08.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p09.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p10.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p11.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p12.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p13.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p14.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p15.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p16.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p17.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p18.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p19.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p20.webp",
+   "w": 900,
+   "h": 1200
+  },
+  {
+   "src": "img/pt/p21.webp",
+   "w": 900,
+   "h": 1200
+  }
+ ],
+ "text": {
+  "ar": {
+   "cPrice": "50 دولار",
+   "tr2": "الاستشارة 50 دولار"
+  },
+  "en": {
+   "cPrice": "50$",
+   "tr2": "Consultations 50$"
+  },
+  "ru": {
+   "cPrice": "50$",
+   "tr2": "Консультация 50$"
+  },
+  "tm": {
+   "cPrice": "50$",
+   "tr2": "Muayene 50$"
+  }
+ },
+ "updated": "2026-11-28T17:39:25.084Z"
+}
