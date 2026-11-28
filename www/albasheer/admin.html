@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>لوحة التحكم — البشير للعلاج في الهند</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0A1B28;--ink:#0E2A3B;--teal:#0F766E;--teal2:#14B8A6;--mint:#F1F8F6;--line:#E3EFEC;--muted:#5B6B80;--bg:#F6F9F8;--red:#DC2626;--ease:cubic-bezier(.32,.72,0,1)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Tajawal','IBM Plex Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;touch-action:manipulation}
+.hide{display:none !important}
+/* login */
+.login{min-height:100dvh;display:grid;place-items:center;padding:24px;background:radial-gradient(900px 600px at 80% -10%,rgba(20,184,166,.18),transparent 60%),radial-gradient(700px 500px at 0% 110%,rgba(56,120,246,.12),transparent 60%),var(--navy)}
+.lg-card{width:min(420px,100%);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:28px;padding:32px 26px;color:#fff;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:0 40px 80px -40px rgba(0,0,0,.6);animation:up .7s var(--ease) both}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.lg-brand{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.lg-ic{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#14B8A6,#0F766E);display:grid;place-items:center}
+.lg-brand b{display:block;font-size:20px}.lg-brand small{display:block;color:rgba(255,255,255,.6);font-size:13px;margin-top:2px}
+.lg-card h1{font-size:24px;margin:0 0 6px}
+.lg-card p{margin:0 0 18px;color:rgba(255,255,255,.65);font-size:14.5px;line-height:1.7}
+.fld{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.fld label{font-size:13px;font-weight:700;color:inherit;opacity:.8}
+.login input{height:52px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.07);color:#fff;padding:0 16px;outline:none;font-size:16px;transition:border-color .2s,background .2s}
+.login input:focus{border-color:#5EEAD4;background:rgba(255,255,255,.1)}
+.btn{height:52px;border:0;border-radius:14px;padding:0 22px;font-weight:800;font-size:15.5px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .2s var(--ease),background-color .25s,opacity .2s}
+.btn:active{transform:scale(.97)}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.b-main{background:#fff;color:var(--navy);width:100%}
+.b-main:hover{background:#5EEAD4}
+.b-teal{background:var(--teal);color:#fff}.b-teal:hover{background:#0B5F59}
+.b-ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}.b-ghost:hover{background:var(--mint)}
+.b-red{background:#FEF2F2;color:var(--red);border:1px solid #FECACA}
+.lg-err{color:#FCA5A5;font-size:14px;min-height:20px;margin-top:10px}
+.lg-link{background:none;border:0;color:#5EEAD4;font-weight:700;font-size:14px;margin-top:14px;padding:6px 0}
+.steps{margin:6px 0 16px;padding:14px 16px;border-radius:16px;background:rgba(0,0,0,.22);font-size:13.5px;line-height:1.85;color:rgba(255,255,255,.8)}
+.steps ol{margin:0;padding-inline-start:18px}
+.steps a{color:#5EEAD4}
+/* app */
+.top{position:sticky;top:0;z-index:20;background:rgba(246,249,248,.85);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border-bottom:1px solid var(--line)}
+.top-in{max-width:1180px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:12px}
+.top .lg-ic{width:40px;height:40px;border-radius:12px}
+.top-t b{display:block;font-size:16.5px}.top-t small{color:var(--muted);font-size:12.5px}
+.top .sp{flex:1}
+.pub{height:44px;border-radius:12px;padding:0 18px;border:0;background:var(--navy);color:#fff;font-weight:800;display:flex;align-items:center;gap:8px;transition:transform .2s var(--ease),background-color .2s}
+.pub:active{transform:scale(.96)}
+.pub .dot{width:8px;height:8px;border-radius:50%;background:#FBBF24;box-shadow:0 0 0 3px rgba(251,191,36,.25)}
+.pub.clean .dot{background:#22C55E;box-shadow:0 0 0 3px rgba(34,197,94,.25)}
+.tabs{max-width:1180px;margin:0 auto;padding:0 18px 10px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:#fff;font-weight:700;font-size:14.5px;color:var(--muted);transition:all .25s var(--ease)}
+.tab.on{background:var(--ink);border-color:var(--ink);color:#fff}
+main{max-width:1180px;margin:0 auto;padding:22px 18px 120px}
+.sec-h{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:6px 0 18px}
+.sec-h h2{margin:0;font-size:26px}
+.sec-h p{margin:4px 0 0;color:var(--muted);font-size:14.5px}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px}
+/* gallery grid */
+.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.gi{position:relative;border-radius:18px;overflow:hidden;background:#E6EFEC;aspect-ratio:3/4;border:1px solid var(--line);animation:up .5s var(--ease) both}
+.gi img{width:100%;height:100%;object-fit:cover;display:block}
+.gi .n{position:absolute;top:8px;inset-inline-start:8px;min-width:26px;height:26px;padding:0 7px;border-radius:999px;background:rgba(10,27,40,.7);color:#fff;font:700 12px/26px 'IBM Plex Sans';text-align:center}
+.gi .new{position:absolute;top:8px;inset-inline-end:8px;height:24px;padding:0 9px;border-radius:999px;background:#FBBF24;color:#422006;font-size:11.5px;font-weight:800;line-height:24px}
+.gi .bar{position:absolute;inset-inline:6px;bottom:6px;display:flex;gap:6px;justify-content:center}
+.ib{width:36px;height:36px;border-radius:11px;border:0;background:rgba(255,255,255,.92);color:var(--ink);display:grid;place-items:center;box-shadow:0 6px 16px -8px rgba(0,0,0,.4);transition:transform .2s var(--ease)}
+.ib:active{transform:scale(.9)}
+.ib.del{color:var(--red)}
+.add{border:2px dashed #C9DDD8;background:var(--mint);display:grid;place-items:center;color:var(--teal);font-weight:800;gap:6px;text-align:center;cursor:pointer;aspect-ratio:3/4;border-radius:18px;transition:background .2s}
+.add:hover{background:#E5F2EF}
+.add svg{margin:0 auto}
+/* doctors list */
+.dl{display:flex;flex-direction:column;gap:10px}
+.dr{display:flex;align-items:center;gap:14px;padding:12px;border-radius:20px;background:#fff;border:1px solid var(--line);animation:up .5s var(--ease) both}
+.dr.off{opacity:.5}
+.dr .ph{width:62px;height:72px;border-radius:14px;background:var(--navy);flex:none;overflow:hidden;display:grid;place-items:end center}
+.dr .ph img{width:100%;height:100%;object-fit:cover;object-position:50% 0}
+.dr .tx{flex:1;min-width:0}
+.dr .tx b{display:block;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dr .tx small{display:block;color:var(--muted);font-size:13px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dr .acts{display:flex;gap:6px;flex:none}
+.dr .ib{background:var(--mint);box-shadow:none}
+.tag{display:inline-block;height:22px;padding:0 9px;border-radius:999px;background:#FEF3C7;color:#92400E;font-size:11.5px;font-weight:800;line-height:22px;margin-inline-start:6px;vertical-align:middle}
+/* editor sheet */
+.sheet-bg{position:fixed;inset:0;z-index:50;background:rgba(10,27,40,.45);opacity:0;pointer-events:none;transition:opacity .35s var(--ease)}
+.sheet-bg.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;z-index:51;inset-block:0;inset-inline-end:0;width:min(640px,100%);background:#fff;transform:translateX(-104%);transition:transform .5s var(--ease);display:flex;flex-direction:column;box-shadow:0 0 80px rgba(0,0,0,.25)}
+[dir="rtl"] .sheet{inset-inline-end:auto;inset-inline-start:0;transform:translateX(104%)}
+.sheet.on{transform:none !important}
+.sh-h{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.sh-h b{flex:1;font-size:18px}
+.sh-b{flex:1;overflow-y:auto;padding:18px;-webkit-overflow-scrolling:touch}
+.sh-f{padding:14px 18px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line);display:flex;gap:10px}
+.sh-f .btn{flex:1}
+.ed .fld label{color:var(--ink);opacity:1}
+.ed input,.ed select,.ed textarea{width:100%;border:1px solid var(--line);border-radius:12px;background:#fff;padding:12px 14px;font-size:15.5px;outline:none;transition:border-color .2s,box-shadow .2s}
+.ed textarea{min-height:110px;resize:vertical;line-height:1.7}
+.ed input:focus,.ed select:focus,.ed textarea:focus{border-color:var(--teal2);box-shadow:0 0 0 4px rgba(20,184,166,.12)}
+.ed .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ed .hint{font-size:12.5px;color:var(--muted);margin-top:-2px}
+.lt{display:flex;gap:6px;margin:4px 0 14px;position:sticky;top:-18px;background:#fff;padding:10px 0;z-index:2}
+.lt button{flex:1;height:38px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:800;font-size:13.5px;color:var(--muted)}
+.lt button.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.gp{font-size:13px;font-weight:800;color:var(--teal);letter-spacing:.02em;margin:22px 0 10px;padding-top:16px;border-top:1px solid var(--line)}
+.photo{display:flex;gap:16px;align-items:center;margin-bottom:16px}
+.photo .pv{width:120px;height:150px;border-radius:18px;background:radial-gradient(circle at 50% 80%,rgba(45,212,191,.25),transparent 60%),var(--navy);display:grid;place-items:end center;overflow:hidden;flex:none}
+.photo .pv img{max-width:100%;max-height:100%;object-fit:contain}
+.photo .pt{font-size:13px;color:var(--muted);line-height:1.7}
+/* toast */
+.toast{position:fixed;z-index:80;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,30px);opacity:0;background:var(--navy);color:#fff;padding:14px 20px;border-radius:16px;font-weight:700;font-size:14.5px;box-shadow:0 20px 40px -20px rgba(0,0,0,.5);transition:all .45s var(--ease);max-width:92vw;text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.busy{position:fixed;inset:0;z-index:90;background:rgba(246,249,248,.75);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:grid;place-items:center}
+.busy-c{background:#fff;border:1px solid var(--line);border-radius:22px;padding:24px 28px;display:flex;align-items:center;gap:14px;font-weight:800;box-shadow:0 30px 60px -30px rgba(0,0,0,.3)}
+.spin{width:24px;height:24px;border-radius:50%;border:3px solid #CDE6E1;border-top-color:var(--teal);animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.tx-grid{display:flex;flex-direction:column;gap:14px}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+@media (max-width:640px){#viewSite{display:none !important}.dr{flex-wrap:wrap}.dr .tx{flex:1 1 calc(100% - 80px)}.dr .acts{width:100%;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--line)}.dr .acts .ib{width:44px !important;height:38px !important}.sec-h h2{font-size:22px}.top-t small{display:none}.gg{grid-template-columns:repeat(3,1fr);gap:8px}.gi,.add{border-radius:14px}.ib{width:32px;height:32px;border-radius:10px}.dr .acts .ib{width:34px;height:34px}.ed .row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<section class="login" id="login">
+ <div class="lg-card">
+  <div class="lg-brand"><span class="lg-ic"><svg width="22" height="20" viewBox="0 0 200 180"><path d="M100 170 C40 125 8 92 8 55 C8 27 30 8 56 8 C76 8 92 19 100 35 C108 19 124 8 144 8 C170 8 192 27 192 55 C192 92 160 125 100 170 Z" fill="none" stroke="#fff" stroke-width="16"/></svg></span><div><b>البشير</b><small>لوحة التحكم بالموقع</small></div></div>
+
+  <div id="lgIn">
+   <h1>تسجيل الدخول</h1>
+   <p>اكتب كلمة السر حتى تعدّل الصور والأطباء والنصوص.</p>
+   <div class="fld"><label for="pw">كلمة السر</label><input id="pw" type="password" autocomplete="current-password"></div>
+   <button class="btn b-main" id="goIn">دخول</button>
+   <div class="lg-err" id="errIn"></div>
+   <button class="lg-link" id="toSetup">أول مرة؟ ربط الحساب</button>
+  </div>
+
+  <div id="lgSetup" class="hide">
+   <h1>ربط الحساب (مرة وحدة)</h1>
+   <p>اللوحة تحفظ تعديلاتك مباشرة بمستودع الموقع على GitHub. تحتاج «رمز وصول» من GitHub وتختار كلمة سر للوحة.</p>
+   <div class="steps"><ol>
+    <li>افتح <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">صفحة إنشاء رمز جديد</a>.</li>
+    <li>الاسم: <b>albasheer-admin</b> — المدة: سنة.</li>
+    <li>Repository access ← Only select repositories ← اختار مستودع الموقع.</li>
+    <li>Permissions ← Contents ← <b>Read and write</b>.</li>
+    <li>Generate token وانسخه هنا.</li>
+   </ol></div>
+   <div class="fld"><label for="tk">رمز الوصول (Token)</label><input id="tk" type="password" autocomplete="off" placeholder="github_pat_…"></div>
+   <div class="fld"><label for="pw1">كلمة سر جديدة للوحة (8 أحرف أو أكثر)</label><input id="pw1" type="password" autocomplete="new-password"></div>
+   <div class="fld"><label for="pw2">أعد كلمة السر</label><input id="pw2" type="password" autocomplete="new-password"></div>
+   <button class="btn b-main" id="goSetup">ربط وحفظ</button>
+   <div class="lg-err" id="errSetup"></div>
+   <button class="lg-link" id="toIn">عندي كلمة سر — رجوع</button>
+  </div>
+ </div>
+</section>
+
+<!-- APP -->
+<div id="app" class="hide">
+ <header class="top">
+  <div class="top-in">
+   <span class="lg-ic"><svg width="20" height="18" viewBox="0 0 200 180"><path d="M100 170 C40 125 8 92 8 55 C8 27 30 8 56 8 C76 8 92 19 100 35 C108 19 124 8 144 8 C170 8 192 27 192 55 C192 92 160 125 100 170 Z" fill="none" stroke="#fff" stroke-width="16"/></svg></span>
+   <div class="top-t"><b>لوحة التحكم</b><small>البشير للعلاج في الهند</small></div>
+   <span class="sp"></span>
+   <a class="btn b-ghost" id="viewSite" href="./" target="_blank" rel="noopener" style="height:44px;font-size:14px;text-decoration:none">عرض الموقع</a>
+   <button class="pub clean" id="pub"><span class="dot"></span><span id="pubT">محفوظ</span></button>
+  </div>
+  <nav class="tabs" id="tabs">
+   <button class="tab on" data-t="docs">الأطباء</button>
+   <button class="tab" data-t="gal">صور المرضى</button>
+   <button class="tab" data-t="txt">النصوص والأسعار</button>
+   <button class="tab" data-t="set">الإعدادات</button>
+  </nav>
+ </header>
+ <main>
+  <section data-p="docs">
+   <div class="sec-h"><div><h2>الأطباء</h2><p>عدّل الصورة والمعلومات، رتّب، أخفِ، أو أضف طبيب جديد.</p></div><button class="btn b-teal" id="addDoc">+ طبيب جديد</button></div>
+   <div class="dl" id="docList"></div>
+  </section>
+  <section data-p="gal" class="hide">
+   <div class="sec-h"><div><h2>صور المرضى</h2><p>تظهر بقسم «لحظات من رحلات مرضانا». رتّبها بالأسهم، والصور الجديدة تتصغر تلقائياً.</p></div></div>
+   <div class="gg" id="galGrid"></div>
+   <input type="file" id="galFile" accept="image/*" multiple class="hide">
+  </section>
+  <section data-p="txt" class="hide">
+   <div class="sec-h"><div><h2>النصوص والأسعار</h2><p>عنوان الصفحة الرئيسية وسعر الاستشارة، بالأربع لغات.</p></div></div>
+   <div class="card ed" style="padding:18px">
+    <div class="lt" id="txtLt"></div>
+    <div class="tx-grid" id="txtGrid"></div>
+   </div>
+  </section>
+  <section data-p="set" class="hide">
+   <div class="sec-h"><div><h2>الإعدادات</h2><p>مكان حفظ الموقع على GitHub وكلمة السر.</p></div></div>
+   <div class="card ed" style="padding:18px">
+    <div class="row"><div class="fld"><label>الحساب</label><input id="sOwner"></div><div class="fld"><label>المستودع</label><input id="sRepo"></div></div>
+    <div class="row"><div class="fld"><label>الفرع</label><input id="sBranch"></div><div class="fld"><label>مجلد الموقع داخل المستودع</label><input id="sBase"></div></div>
+    <button class="btn b-ghost" id="saveSet">حفظ الإعدادات</button>
+    <div class="gp">الأمان</div>
+    <button class="btn b-ghost" id="logout">تسجيل الخروج</button>
+    <button class="btn b-red" id="resetKey" style="margin-inline-start:8px">تغيير كلمة السر / الرمز</button>
+   </div>
+  </section>
+ </main>
+</div>
+
+<!-- doctor editor -->
+<div class="sheet-bg" id="shBg"></div>
+<aside class="sheet ed" id="sheet" aria-modal="true" role="dialog">
+ <div class="sh-h"><b id="shTitle">تعديل الطبيب</b><button class="ib" id="shX" aria-label="إغلاق">✕</button></div>
+ <div class="sh-b" id="shBody"></div>
+ <div class="sh-f"><button class="btn b-ghost" id="shCancel">إلغاء</button><button class="btn b-teal" id="shSave">حفظ التعديل</button></div>
+</aside>
+<input type="file" id="docFile" accept="image/png,image/webp,image/*" class="hide">
+
+<div class="toast" id="toast"></div>
+<div class="busy hide" id="busy"><div class="busy-c"><span class="spin"></span><span id="busyT">جاري النشر…</span></div></div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const LN = ['ar', 'en', 'ru', 'tm'], LNAME = { ar: 'العربية', en: 'English', ru: 'Русский', tm: 'Türkmen' };
+const DEF = { owner: 'zaraiq179-ctrl', repo: 'mahfazti', branch: 'main', base: 'www/albasheer' };
+let CFG = Object.assign({}, DEF); try { Object.assign(CFG, JSON.parse(localStorage.getItem('bsa_cfg') || '{}')); } catch (e) {}
+let TOKEN = null;
+let BASE = { docs: [], gal: [], txt: {} }, C = null, PEND = {}, dirty = false;
+
+/* ---------- helpers ---------- */
+const toast = (m, ms = 2600) => { const t = $('#toast'); t.textContent = m; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), ms); };
+const busy = (on, m) => { $('#busy').classList.toggle('hide', !on); if (m) $('#busyT').textContent = m; };
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const b64u = (str) => btoa(unescape(encodeURIComponent(str)));
+const ub64 = (b) => decodeURIComponent(escape(atob(b.replace(/\n/g, ''))));
+const L = (v, l) => (v && v[l]) || '';
+const setDirty = (d = true) => { dirty = d; const p = $('#pub'); p.classList.toggle('clean', !d); $('#pubT').textContent = d ? 'نشر التغييرات' : 'محفوظ'; };
+window.addEventListener('beforeunload', (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+/* ---------- crypto: the GitHub token is stored encrypted with your password ---------- */
+const enc = new TextEncoder(), dec = new TextDecoder();
+const bufB64 = (b) => btoa(String.fromCharCode(...new Uint8Array(b))), b64Buf = (s) => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function keyFrom(pw, salt) { const k = await crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveKey']); return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 310000, hash: 'SHA-256' }, k, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']); }
+async function seal(token, pw) { const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12)); const k = await keyFrom(pw, salt); const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, k, enc.encode(token)); return { v: 1, salt: bufB64(salt), iv: bufB64(iv), ct: bufB64(ct) }; }
+async function unseal(box, pw) { const k = await keyFrom(pw, b64Buf(box.salt)); const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64Buf(box.iv) }, k, b64Buf(box.ct)); return dec.decode(pt); }
+
+/* ---------- GitHub ---------- */
+const API = 'https://api.github.com';
+async function gh(path, opt = {}, tok = TOKEN) {
+  const r = await fetch(API + path, Object.assign({}, opt, { headers: Object.assign({ 'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + tok, 'X-GitHub-Api-Version': '2022-11-28' }, opt.body ? { 'Content-Type': 'application/json' } : {}) }));
+  if (r.status === 404) return null;
+  if (!r.ok) { let m = r.status + ''; try { m += ' ' + (await r.json()).message; } catch (e) {} throw new Error(m); }
+  return r.status === 204 ? {} : r.json();
+}
+const repoPath = (p) => `/repos/${CFG.owner}/${CFG.repo}`;
+async function readJSON(file, tok) { const r = await gh(`${repoPath()}/contents/${CFG.base}/${file}?ref=${CFG.branch}&t=${Date.now()}`, {}, tok); return r ? JSON.parse(ub64(r.content)) : null; }
+async function commit(files, msg) { // files: [{path, content(base64)}]
+  const ref = await gh(`${repoPath()}/git/ref/heads/${CFG.branch}`);
+  const head = ref.object.sha, hc = await gh(`${repoPath()}/git/commits/${head}`);
+  const tree = [];
+  for (const f of files) { const b = await gh(`${repoPath()}/git/blobs`, { method: 'POST', body: JSON.stringify({ content: f.content, encoding: 'base64' }) }); tree.push({ path: `${CFG.base}/${f.path}`, mode: '100644', type: 'blob', sha: b.sha }); }
+  const t = await gh(`${repoPath()}/git/trees`, { method: 'POST', body: JSON.stringify({ base_tree: hc.tree.sha, tree }) });
+  const c = await gh(`${repoPath()}/git/commits`, { method: 'POST', body: JSON.stringify({ message: msg, tree: t.sha, parents: [head] }) });
+  await gh(`${repoPath()}/git/refs/heads/${CFG.branch}`, { method: 'PATCH', body: JSON.stringify({ sha: c.sha }) });
+}
+
+/* ---------- login ---------- */
+$('#toSetup').onclick = () => { $('#lgIn').classList.add('hide'); $('#lgSetup').classList.remove('hide'); };
+$('#toIn').onclick = () => { $('#lgSetup').classList.add('hide'); $('#lgIn').classList.remove('hide'); };
+async function loginWith(tok) { TOKEN = tok; try { sessionStorage.setItem('bsa_t', tok); } catch (e) {} await boot(); }
+$('#goIn').onclick = async () => {
+  const pw = $('#pw').value, err = $('#errIn'); err.textContent = '';
+  if (!pw) { err.textContent = 'اكتب كلمة السر'; return; }
+  $('#goIn').disabled = true;
+  try {
+    const r = await fetch('admin-key.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) { err.textContent = 'اللوحة مو مربوطة بعد — اضغط «أول مرة؟ ربط الحساب»'; return; }
+    const tok = await unseal(await r.json(), pw).catch(() => null);
+    if (!tok) { err.textContent = 'كلمة السر غلط'; return; }
+    await loginWith(tok);
+  } catch (e) { err.textContent = 'صار خطأ: ' + e.message; } finally { $('#goIn').disabled = false; }
+};
+$('#pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#goIn').click(); });
+$('#goSetup').onclick = async () => {
+  const tk = $('#tk').value.trim(), p1 = $('#pw1').value, p2 = $('#pw2').value, err = $('#errSetup'); err.textContent = '';
+  if (!tk) { err.textContent = 'الصق رمز الوصول'; return; }
+  if (p1.length < 8) { err.textContent = 'كلمة السر لازم 8 أحرف أو أكثر'; return; }
+  if (p1 !== p2) { err.textContent = 'كلمتا السر مو متطابقتين'; return; }
+  $('#goSetup').disabled = true;
+  try {
+    const repo = await gh(repoPath(), {}, tk);
+    if (!repo) throw new Error('ما لكيت المستودع — تأكد إن الرمز إله صلاحية عليه');
+    if (repo.permissions && !repo.permissions.push) throw new Error('الرمز ما عنده صلاحية كتابة (Contents: Read and write)');
+    TOKEN = tk;
+    const box = await seal(tk, p1);
+    await commit([{ path: 'admin-key.json', content: b64u(JSON.stringify(box)) }], 'Admin: connect control panel');
+    toast('تم الربط ✓');
+    await loginWith(tk);
+  } catch (e) { err.textContent = e.message; } finally { $('#goSetup').disabled = false; }
+};
+
+/* ---------- boot ---------- */
+async function boot() {
+  busy(true, 'جاري التحميل…');
+  try {
+    const [d, g, t] = await Promise.all(['doctors-base.json', 'gallery-base.json', 'texts-base.json'].map(f => fetch(f + '?t=' + Date.now()).then(r => r.ok ? r.json() : null).catch(() => null)));
+    BASE = { docs: d || [], gal: g || [], txt: t || {} };
+    C = (await readJSON('content.json')) || { version: 1 };
+    C.doctors = C.doctors || { order: [], items: {} }; C.doctors.items = C.doctors.items || {}; C.doctors.order = C.doctors.order || [];
+    if (!C.gallery || !C.gallery.length) C.gallery = BASE.gal.slice();
+    C.text = C.text || {};
+    $('#login').classList.add('hide'); $('#app').classList.remove('hide');
+    renderAll(); setDirty(false);
+  } catch (e) { toast('تعذر التحميل: ' + e.message, 5000); $('#login').classList.remove('hide'); $('#app').classList.add('hide'); }
+  finally { busy(false); }
+}
+
+/* ---------- tabs ---------- */
+$('#tabs').onclick = (e) => { const b = e.target.closest('.tab'); if (!b) return; $$('.tab').forEach(x => x.classList.toggle('on', x === b)); $$('main > section').forEach(s => s.classList.toggle('hide', s.dataset.p !== b.dataset.t)); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+/* ---------- doctors ---------- */
+const mergedDocs = () => (window.__bsDocsAll ? window.__bsDocsAll() : []);
+function docList() { // all doctors including hidden, in order
+  const map = {}, keys = [];
+  BASE.docs.forEach(d => { map[d.key] = d; keys.push(d.key); });
+  Object.keys(C.doctors.items).forEach(k => { const o = C.doctors.items[k]; if (!map[k] && o && o.name) { map[k] = o; keys.push(k); } });
+  const order = C.doctors.order.length ? C.doctors.order.slice() : keys.slice();
+  keys.forEach(k => { if (order.indexOf(k) < 0) order.push(k); });
+  return order.filter(k => map[k]).map(k => { const o = C.doctors.items[k] || {}, b = map[k]; const v = (f) => (o[f] && Object.values(o[f]).some(x => x)) ? o[f] : b[f]; return { key: k, img: o.img || b.img, name: v('name'), spec: v('spec'), exp: o.exp || b.exp, hidden: !!o.hidden, isNew: !BASE.docs.some(x => x.key === k) }; });
+}
+const imgSrc = (p) => PEND[p] ? PEND[p].url : p;
+function renderDocs() {
+  const L0 = docList(), box = $('#docList');
+  box.innerHTML = L0.map((d, i) => `<div class="dr ${d.hidden ? 'off' : ''}" data-k="${esc(d.key)}" style="animation-delay:${i * 30}ms">
+    <span class="ph">${d.img ? `<img src="${esc(imgSrc(d.img))}" alt="">` : ''}</span>
+    <div class="tx"><b>${esc(L(d.name, 'ar') || L(d.name, 'en'))}${d.isNew ? '<span class="tag">جديد</span>' : ''}${d.hidden ? '<span class="tag" style="background:#E5E7EB;color:#374151">مخفي</span>' : ''}</b><small>${esc(L(d.spec, 'ar'))}${d.exp ? ' · ' + d.exp + ' سنة خبرة' : ''}</small></div>
+    <div class="acts">
+      <button class="ib" data-a="up" aria-label="لفوق">↑</button><button class="ib" data-a="down" aria-label="لجوة">↓</button>
+      <button class="ib" data-a="vis" aria-label="إظهار/إخفاء">${d.hidden ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3l18 18M10.6 5.1A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.7 8.5 2 12 2 12s3.6 7 10 7c1.6 0 3-.4 4.3-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>'}</button>
+      <button class="ib" data-a="edit" aria-label="تعديل" style="background:var(--ink);color:#fff"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+    </div></div>`).join('') || '<div class="empty">ماكو أطباء</div>';
+}
+$('#docList').onclick = (e) => {
+  const b = e.target.closest('[data-a]'); if (!b) return; const k = b.closest('.dr').dataset.k, a = b.dataset.a;
+  const keys = docList().map(d => d.key);
+  if (a === 'up' || a === 'down') { const i = keys.indexOf(k), j = a === 'up' ? i - 1 : i + 1; if (j < 0 || j >= keys.length) return; [keys[i], keys[j]] = [keys[j], keys[i]]; C.doctors.order = keys; setDirty(); renderDocs(); }
+  if (a === 'vis') { const o = C.doctors.items[k] = C.doctors.items[k] || {}; o.hidden = !o.hidden; if (!o.hidden) delete o.hidden; C.doctors.order = keys; setDirty(); renderDocs(); toast(o.hidden ? 'انخفى من الموقع' : 'رجع يظهر'); }
+  if (a === 'edit') openDoc(k);
+};
+const FIELDS = [['name', 'الاسم', 'input'], ['title', 'المنصب / اللقب الرسمي', 'input'], ['spec', 'التخصص (يظهر تحت الاسم)', 'input'], ['area', 'القسم (الشارة الصغيرة)', 'input'], ['big', 'الكلمة الكبيرة وراء الصورة', 'input'], ['card', 'نبذة قصيرة للبطاقة', 'textarea'], ['hospital', 'المستشفى', 'input'], ['city', 'المدينة', 'input'], ['langs', 'اللغات التي يتحدثها', 'input']];
+const LISTS = [['profile', 'النبذة الكاملة — كل فقرة بسطر'], ['specialties', 'التخصصات — كل واحد بسطر'], ['procedures', 'العمليات والإجراءات — كل وحدة بسطر'], ['conditions', 'الحالات التي يعالجها — كل وحدة بسطر'], ['qualifications', 'المؤهلات — كل وحدة بسطر'], ['awards', 'الجوائز — كل وحدة بسطر'], ['memberships', 'العضويات — كل وحدة بسطر']];
+const CATS = [['heart', 'القلب'], ['onco', 'الأورام'], ['uro', 'المسالك البولية'], ['gyn', 'النسائية والتوليد'], ['neuro', 'الأعصاب'], ['bone', 'العظام والمفاصل'], ['spine', 'العمود الفقري']];
+const ICONS = { heart: 'heart', onco: 'ribbon', uro: 'kidney', gyn: 'baby', neuro: 'brain', bone: 'bone', spine: 'activity' };
+let ED = null;
+function openDoc(k) {
+  const base = BASE.docs.find(d => d.key === k) || {}, o = C.doctors.items[k] || {};
+  const cur = {}; ['img', 'exp', 'filter'].forEach(f => cur[f] = o[f] != null ? o[f] : base[f]);
+  FIELDS.forEach(([f]) => { cur[f] = {}; LN.forEach(l => cur[f][l] = (o[f] && o[f][l]) || (base[f] && base[f][l]) || ''); });
+  LISTS.forEach(([f]) => { const src = (o[f] && o[f].length) ? o[f] : (base[f] || []); cur[f] = {}; LN.forEach(l => cur[f][l] = src.map(x => x[l] || '').join('\n')); });
+  ED = { k, cur, lang: 'ar', isNew: !base.key };
+  $('#shTitle').textContent = ED.isNew && !o.name ? 'طبيب جديد' : 'تعديل: ' + (cur.name.ar || cur.name.en);
+  drawEd(); $('#sheet').classList.add('on'); $('#shBg').classList.add('on');
+}
+function drawEd() {
+  const { cur, lang } = ED;
+  $('#shBody').innerHTML = `
+   <div class="photo"><span class="pv">${cur.img ? `<img src="${esc(imgSrc(cur.img))}" alt="">` : ''}</span>
+    <div><button class="btn b-ghost" id="pickPh" style="height:44px">تغيير الصورة</button><div class="photo pt" style="margin-top:8px">الأفضل صورة PNG بدون خلفية (الدكتور مقصوص). تظهر على الخلفية النيلي مثل المعاينة.</div></div></div>
+   <div class="row"><div class="fld"><label>سنوات الخبرة</label><input id="eExp" type="number" min="0" max="70" value="${esc(cur.exp || '')}"></div>
+   <div class="fld"><label>القسم بالموقع</label><select id="eCat">${CATS.map(([v, t]) => `<option value="${v}" ${cur.filter === v ? 'selected' : ''}>${t}</option>`).join('')}</select></div></div>
+   <div class="lt">${LN.map(l => `<button data-l="${l}" class="${l === lang ? 'on' : ''}">${LNAME[l]}</button>`).join('')}</div>
+   ${FIELDS.map(([f, lab, ty]) => `<div class="fld"><label>${lab}</label>${ty === 'textarea' ? `<textarea data-f="${f}" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${esc(cur[f][lang])}</textarea>` : `<input data-f="${f}" dir="${lang === 'ar' ? 'rtl' : 'ltr'}" value="${esc(cur[f][lang])}">`}</div>`).join('')}
+   <div class="gp">الصفحة الكاملة للطبيب</div>
+   ${LISTS.map(([f, lab]) => `<div class="fld"><label>${lab}</label><textarea data-list="${f}" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">${esc(cur[f][lang])}</textarea></div>`).join('')}
+   <div class="hint">إذا تركت لغة فارغة، الموقع يعرض العربي أو الإنكليزي بدلها.</div>
+   ${ED.isNew ? '<div class="gp">حذف</div><button class="btn b-red" id="delDoc">حذف هذا الطبيب</button>' : ''}`;
+  $('#pickPh').onclick = () => $('#docFile').click();
+  $$('.lt button', $('#shBody')).forEach(b => b.onclick = () => { grab(); ED.lang = b.dataset.l; drawEd(); });
+  const del = $('#delDoc'); if (del) del.onclick = () => { if (!confirm('حذف الطبيب نهائياً من اللوحة؟')) return; delete C.doctors.items[ED.k]; C.doctors.order = C.doctors.order.filter(x => x !== ED.k); closeEd(); setDirty(); renderDocs(); };
+}
+function grab() {
+  const { cur, lang } = ED, B = $('#shBody');
+  $$('[data-f]', B).forEach(i => cur[i.dataset.f][lang] = i.value.trim());
+  $$('[data-list]', B).forEach(i => cur[i.dataset.list][lang] = i.value.replace(/\r/g, '').split('\n').map(s => s.trim()).filter(Boolean).join('\n'));
+  const e = $('#eExp', B); if (e) cur.exp = e.value ? +e.value : '';
+  const c = $('#eCat', B); if (c) cur.filter = c.value;
+}
+function closeEd() { $('#sheet').classList.remove('on'); $('#shBg').classList.remove('on'); ED = null; }
+$('#shX').onclick = $('#shCancel').onclick = $('#shBg').onclick = closeEd;
+$('#shSave').onclick = () => {
+  grab(); const { k, cur } = ED, base = BASE.docs.find(d => d.key === k) || {};
+  if (!cur.name.ar && !cur.name.en) { toast('اكتب اسم الطبيب'); return; }
+  const o = C.doctors.items[k] || {}, hid = o.hidden, out = {};
+  if (cur.img && cur.img !== base.img) out.img = cur.img;
+  if (cur.exp !== '' && cur.exp !== base.exp) out.exp = cur.exp;
+  if (cur.filter && cur.filter !== base.filter) { out.filter = cur.filter; out.icon = ICONS[cur.filter]; }
+  FIELDS.forEach(([f]) => { const ch = {}; let any = false; LN.forEach(l => { const v = cur[f][l], bv = base[f] ? base[f][l] : ''; if (v && v !== bv) { ch[l] = v; any = true; } }); if (any) out[f] = ch; });
+  LISTS.forEach(([f]) => {
+    const rows = {}; LN.forEach(l => rows[l] = cur[f][l] ? cur[f][l].split('\n') : []);
+    const n = Math.max(...LN.map(l => rows[l].length));
+    const list = []; for (let i = 0; i < n; i++) { const it = {}; LN.forEach(l => it[l] = rows[l][i] || ''); list.push(it); }
+    const bs = JSON.stringify((base[f] || []).map(x => LN.map(l => x[l] || '')));
+    if (JSON.stringify(list.map(x => LN.map(l => x[l]))) !== bs) out[f] = list;
+  });
+  if (!base.key) { out.name = cur.name; if (!out.filter) { out.filter = cur.filter || 'heart'; out.icon = ICONS[out.filter]; } if (!out.img && cur.img) out.img = cur.img; }
+  if (hid) out.hidden = true;
+  C.doctors.items[k] = out;
+  if (!C.doctors.order.length) C.doctors.order = docList().map(d => d.key);
+  if (C.doctors.order.indexOf(k) < 0) C.doctors.order.push(k);
+  closeEd(); setDirty(); renderDocs(); toast('انحفظ التعديل — اضغط «نشر التغييرات» حتى يظهر بالموقع', 3600);
+};
+$('#addDoc').onclick = () => { const k = 'dr' + Date.now().toString(36); C.doctors.items[k] = C.doctors.items[k] || {}; openDoc(k); ED.isNew = true; delete C.doctors.items[k]; };
+$('#docFile').onchange = async (e) => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f || !ED) return;
+  grab(); const p = await stage(f, 1000, 1250, 0.9); ED.cur.img = p; drawEd();
+};
+
+/* ---------- images: resize in the browser, keep transparency, queue for publishing ---------- */
+async function stage(file, maxW, maxH, q) {
+  const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }).catch(() => null);
+  let img = bmp; if (!img) { img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file); }); }
+  const s = Math.min(1, maxW / img.width, maxH / img.height), w = Math.round(img.width * s), h = Math.round(img.height * s);
+  const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const cx = cv.getContext('2d'); cx.imageSmoothingQuality = 'high'; cx.drawImage(img, 0, 0, w, h);
+  let blob = await new Promise(r => cv.toBlob(r, 'image/webp', q)); let ext = 'webp';
+  if (!blob || blob.type !== 'image/webp') { blob = await new Promise(r => cv.toBlob(r, 'image/png')); ext = 'png'; }
+  const path = 'media/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6) + '.' + ext;
+  PEND[path] = { blob, url: URL.createObjectURL(blob), w, h };
+  return path;
+}
+const blobB64 = (b) => new Promise(r => { const fr = new FileReader(); fr.onload = () => r(String(fr.result).split(',')[1]); fr.readAsDataURL(b); });
+
+/* ---------- gallery ---------- */
+function renderGal() {
+  const g = C.gallery;
+  $('#galGrid').innerHTML = g.map((it, i) => `<div class="gi" data-i="${i}" style="animation-delay:${Math.min(i, 20) * 20}ms"><img src="${esc(imgSrc(it.src))}" alt="" loading="lazy"><span class="n">${i + 1}</span>${PEND[it.src] ? '<span class="new">جديد</span>' : ''}
+    <div class="bar"><button class="ib" data-a="up" aria-label="قبل">→</button><button class="ib del" data-a="del" aria-label="حذف">🗑</button><button class="ib" data-a="down" aria-label="بعد">←</button></div></div>`).join('')
+    + `<label class="add" for="galFile"><span><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg><br>إضافة صور</span></label>`;
+}
+$('#galGrid').onclick = (e) => {
+  const b = e.target.closest('[data-a]'); if (!b) return; const i = +b.closest('.gi').dataset.i, a = b.dataset.a, g = C.gallery;
+  if (a === 'del') { if (!confirm('حذف الصورة من الموقع؟')) return; g.splice(i, 1); }
+  if (a === 'up' && i > 0) [g[i - 1], g[i]] = [g[i], g[i - 1]];
+  if (a === 'down' && i < g.length - 1) [g[i + 1], g[i]] = [g[i], g[i + 1]];
+  setDirty(); renderGal();
+};
+$('#galFile').onchange = async (e) => {
+  const fs = [...e.target.files]; e.target.value = ''; if (!fs.length) return;
+  busy(true, 'جاري تجهيز الصور…');
+  try { for (const f of fs) { const p = await stage(f, 1200, 1200, 0.82); const P = PEND[p]; C.gallery.push({ src: p, w: P.w, h: P.h }); } setDirty(); renderGal(); toast('انضافت ' + fs.length + ' صورة'); }
+  catch (err) { toast('تعذر تجهيز صورة: ' + err.message, 4000); } finally { busy(false); }
+};
+
+/* ---------- texts ---------- */
+const TXT = [['h1a', 'العنوان الرئيسي — السطر الأول'], ['h1b', 'العنوان الرئيسي — السطر الثاني (الملوّن)'], ['lede', 'النص تحت العنوان'], ['cPrice', 'سعر الاستشارة'], ['cPriceNote', 'ملاحظة تحت السعر'], ['tr2', 'السعر بالشريط تحت الصفحة الرئيسية']];
+let TL = 'ar';
+function renderTxt() {
+  $('#txtLt').innerHTML = LN.map(l => `<button data-l="${l}" class="${l === TL ? 'on' : ''}">${LNAME[l]}</button>`).join('');
+  $('#txtGrid').innerHTML = TXT.map(([k, lab]) => { const v = (C.text[TL] && C.text[TL][k]) || (BASE.txt[TL] && BASE.txt[TL][k]) || ''; return `<div class="fld"><label>${lab}</label>${k === 'lede' ? `<textarea data-k="${k}" dir="${TL === 'ar' ? 'rtl' : 'ltr'}">${esc(v)}</textarea>` : `<input data-k="${k}" dir="${TL === 'ar' ? 'rtl' : 'ltr'}" value="${esc(v)}">`}</div>`; }).join('');
+}
+$('#txtLt').onclick = (e) => { const b = e.target.closest('button'); if (!b) return; TL = b.dataset.l; renderTxt(); };
+$('#txtGrid').addEventListener('input', (e) => { const i = e.target.closest('[data-k]'); if (!i) return; const k = i.dataset.k, v = i.value, bv = BASE.txt[TL] && BASE.txt[TL][k]; C.text[TL] = C.text[TL] || {}; if (v && v !== bv) C.text[TL][k] = v; else delete C.text[TL][k]; setDirty(); });
+
+/* ---------- settings ---------- */
+function renderSet() { $('#sOwner').value = CFG.owner; $('#sRepo').value = CFG.repo; $('#sBranch').value = CFG.branch; $('#sBase').value = CFG.base; }
+$('#saveSet').onclick = () => { CFG = { owner: $('#sOwner').value.trim(), repo: $('#sRepo').value.trim(), branch: $('#sBranch').value.trim() || 'main', base: $('#sBase').value.trim().replace(/^\/|\/$/g, '') }; localStorage.setItem('bsa_cfg', JSON.stringify(CFG)); toast('انحفظت الإعدادات'); };
+$('#logout').onclick = () => { if (dirty && !confirm('عندك تغييرات ما منشورة. تطلع؟')) return; dirty = false; sessionStorage.removeItem('bsa_t'); location.reload(); };
+$('#resetKey').onclick = () => { if (!confirm('تريد تربط رمز جديد أو تغيّر كلمة السر؟')) return; sessionStorage.removeItem('bsa_t'); $('#app').classList.add('hide'); $('#login').classList.remove('hide'); $('#toSetup').click(); };
+
+/* ---------- publish ---------- */
+$('#pub').onclick = async () => {
+  if (!dirty) { toast('ماكو تغييرات جديدة'); return; }
+  busy(true, 'جاري النشر…');
+  try {
+    const used = new Set([...C.gallery.map(g => g.src), ...Object.values(C.doctors.items).map(o => o && o.img).filter(Boolean)]);
+    const files = [];
+    for (const p of Object.keys(PEND)) if (used.has(p)) files.push({ path: p, content: await blobB64(PEND[p].blob) });
+    C.updated = new Date().toISOString();
+    files.push({ path: 'content.json', content: b64u(JSON.stringify(C, null, 1)) });
+    await commit(files, 'Admin: update site content');
+    PEND = {}; setDirty(false);
+    busy(false); toast('تم النشر ✓ — التغييرات تظهر بالموقع خلال دقيقة أو دقيقتين', 5200);
+    renderAll();
+  } catch (e) { busy(false); toast('فشل النشر: ' + e.message, 6000); }
+};
+
+function renderAll() { renderDocs(); renderGal(); renderTxt(); renderSet(); }
+
+/* resume an open session (same tab) */
+(async () => { const t = sessionStorage.getItem('bsa_t'); if (t) { TOKEN = t; await boot(); } })();
+})();
+</script>
+</body>
+</html>

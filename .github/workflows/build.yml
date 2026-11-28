@@ -33,6 +33,8 @@ jobs:
         uses: actions/deploy-pages@v4
 
   android:
+    # content edits from the Al-Basheer control panel only touch the website, not the app
+    if: ${{ !startsWith(github.event.head_commit.message, 'Admin:') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
